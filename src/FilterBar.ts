@@ -4,7 +4,7 @@ import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import type FilterField from "./FilterField";
 import type { Press } from "./util";
-import { Float, esc, message, num, parseNum, renderIcon } from "./util";
+import { esc, Float, fold, message, num, parseNum, renderIcon } from "./util";
 import "./library";
 
 // Etiket ≥ ve ≤ gösterir; GT/LT adları dışarıya verilmiş sözleşmedir
@@ -101,12 +101,12 @@ export default class FilterBar extends Control {
 	}
 	private suggest(text: string): Token[] {
 		const raw = text.trim();
-		const q = raw.toLocaleLowerCase();
+		const q = fold(raw);
 		const out: Token[] = [];
 		const scaled = /^([<>]?)=?\s*([\d.,]+)\s*(b|bin|k|m|mn)?$/i.exec(raw);
 		this.getFields().forEach((field) => {
 			if (field.getType() === "option") {
-				((field.getOptions() as string[]) ?? []).filter((o) => !q || o.toLocaleLowerCase().includes(q) || field.getLabel().toLocaleLowerCase().includes(q)).forEach((value) => out.push({ field, op: "EQ", value }));
+				((field.getOptions() as string[]) ?? []).filter((o) => !q || fold(o).includes(q) || fold(field.getLabel()).includes(q)).forEach((value) => out.push({ field, op: "EQ", value }));
 			} else if (field.getType() === "number" && scaled) {
 				const unit = (scaled[3] ?? "").toLowerCase();
 				const value = parseNum(scaled[2]) * (unit.startsWith("m") ? 1e6 : unit ? 1e3 : 1);

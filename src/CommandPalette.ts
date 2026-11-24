@@ -1,6 +1,6 @@
 import Element from "sap/ui/core/Element";
 import type Command from "./Command";
-import { esc, iconHtml, message, nextZ, staticArea } from "./util";
+import { esc, fold, iconHtml, message, nextZ, staticArea } from "./util";
 import "./library";
 
 /**
@@ -116,7 +116,7 @@ export default class CommandPalette extends Element {
 	}
 	/** Sırayla geçen harflerin puanı; -1 eşleşmedi */
 	private score(text: string, query: string): number {
-		const hay = text.toLocaleLowerCase();
+		const hay = fold(text);
 		const at = hay.indexOf(query);
 		if (at >= 0) return 1000 - at;
 		let from = 0;
@@ -130,7 +130,7 @@ export default class CommandPalette extends Element {
 		return gap > query.length * 3 ? -1 : 500 - gap;
 	}
 	private paint(query: string): void {
-		const q = query.trim().toLocaleLowerCase();
+		const q = fold(query.trim());
 		const scored = this.getCommands()
 			.map((command) => ({ command, score: q ? Math.max(this.score(command.getText(), q), this.score(`${command.getHint()} ${command.getKeywords()}`, q) - 200) : 0 }))
 			.filter((hit) => hit.score >= 0);

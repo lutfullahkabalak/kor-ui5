@@ -11,7 +11,7 @@ import Dialog from "./Dialog";
 import FilterBar from "./FilterBar";
 import FilterField from "./FilterField";
 import type { Press } from "./util";
-import { Float, esc, iconHtml, message, num, renderIcon } from "./util";
+import { esc, Float, fold, iconHtml, message, num, renderIcon } from "./util";
 import "./library";
 
 export type LookupEntry = { key: string; text: string };
@@ -210,8 +210,8 @@ export default class LookupField extends Control {
 		if (this.asked && !this.loading) this.resolve();
 	}
 	private resolve(): void {
-		const text = this.asked.toLocaleLowerCase();
-		const exact = this.hits.filter((c) => Object.values(this.entry(c)).some((v) => v.toLocaleLowerCase() === text));
+		const text = fold(this.asked);
+		const exact = this.hits.filter((c) => Object.values(this.entry(c)).some((v) => fold(v) === text));
 		const hit = exact[0] ?? (this.hits.length === 1 ? this.hits[0] : undefined);
 		if (hit) this.take(this.entry(hit), hit);
 		else {
@@ -265,7 +265,7 @@ export default class LookupField extends Control {
 		this.active = Math.min(this.active, Math.max(0, list.length - 1));
 		const total = (this.getBinding("rows") as ListBinding | undefined)?.getLength() ?? 0;
 		const mark = (text: string) => {
-			const at = this.query ? text.toLocaleLowerCase().indexOf(this.query.toLocaleLowerCase()) : -1;
+			const at = this.query ? fold(text).indexOf(fold(this.query)) : -1;
 			return at < 0 ? esc(text) : `${esc(text.slice(0, at))}<mark>${esc(text.slice(at, at + this.query.length))}</mark>${esc(text.slice(at + this.query.length))}`;
 		};
 		this.float!.element.innerHTML = `${this.query ? "" : `<div class="korMenuHead">${esc(message("RECENT"))}</div>`}<div role="listbox">${list.map((h, i) => `<div role="option" id="${this.getId()}-o${i}" data-i="${i}" aria-selected="${i === this.active}" class="korMenuItem korLookupItem${i === this.active ? " korMenuActive" : ""}"><span class="korLookupText">${mark(h.entry.text)}</span><span class="korLookupInfo">${esc(h.info)}</span><span class="korLookupKey">${mark(h.entry.key)}</span></div>`).join("")}</div>${list.length ? "" : `<div class="korMenuNone">${esc(message(this.loading ? "LOADING" : "NO_RESULT"))}</div>`}<button type="button" tabindex="-1" class="korMenuItem korLookupAll" data-all="1">${iconHtml("search")}<span>${esc(this.query && total > list.length ? message("LOOKUP_MORE", [num(total)]) : message("LOOKUP_OPEN"))}</span><kbd class="korKbd">F4</kbd></button>`;

@@ -1,7 +1,7 @@
 import Control from "sap/ui/core/Control";
 import type RenderManager from "sap/ui/core/RenderManager";
 import type Item from "sap/ui/core/Item";
-import { Float, esc, iconHtml, message, renderIcon } from "./util";
+import { esc, Float, fold, iconHtml, message, renderIcon } from "./util";
 import "./library";
 
 /**
@@ -71,8 +71,8 @@ export default class SelectField extends Control {
 		this.open(this.input().value);
 	}
 	private open(query: string): void {
-		const needle = query.toLocaleLowerCase();
-		this.hits = this.getItems().filter((item) => item.getText().toLocaleLowerCase().includes(needle));
+		const needle = fold(query);
+		this.hits = this.getItems().filter((item) => fold(item.getText()).includes(needle));
 		this.active = Math.max(0, this.hits.findIndex((item) => item.getKey() === this.getSelectedKey()));
 		if (!this.float) {
 			const list = document.createElement("div");

@@ -60,6 +60,10 @@ export function isoDate(date: Date): string {
 	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+/** Arama için: büyük-küçük ve aksan farkını kaldırır, uzunluğu korur ("İstanbul" → "istanbul"). Tarayıcı diline bağlı değildir. */
+export function fold(text: string): string {
+	return [...text].map((c) => (c === "ı" ? "i" : c.normalize("NFD")[0].toLowerCase().padEnd(c.length))).join("");
+}
 export function esc(text: unknown): string {
 	return String(text ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }

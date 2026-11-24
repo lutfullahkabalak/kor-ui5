@@ -2,7 +2,7 @@ import Control from "sap/ui/core/Control";
 import type RenderManager from "sap/ui/core/RenderManager";
 import type Item from "sap/ui/core/Item";
 import type { Press } from "./util";
-import { Float, esc, iconHtml, message, renderIcon } from "./util";
+import { esc, Float, fold, iconHtml, message, renderIcon } from "./util";
 import "./library";
 
 /**
@@ -68,8 +68,8 @@ export default class MultiSelect extends Control {
 		if (this.float) this.open();
 	}
 	private open(): void {
-		const needle = this.input().value.toLocaleLowerCase();
-		this.hits = this.getItems().filter((item) => item.getText().toLocaleLowerCase().includes(needle));
+		const needle = fold(this.input().value);
+		this.hits = this.getItems().filter((item) => fold(item.getText()).includes(needle));
 		this.active = Math.min(this.active, Math.max(0, this.hits.length - 1));
 		if (!this.float) {
 			const list = document.createElement("div");

@@ -64,3 +64,4 @@ Bulunan ve düzeltilen hatalar: V2 tarihinin bir gün kayması, Decimal'in sayı
 - `*.gen.d.ts` izlenmez: üretici ortama göre farklı açıklama yazıyor.
 - Yüzde `pct`, tablo tarihi `dayText` ile yerel biçimlenir; metin içine `%` veya `dd.MM` gömme.
 - `build:interfaces` gerekirse iki kez koşar: temiz klonda TreeGrid, DataGrid arayüzü henüz yokken üretilemez.
+- Arama karşılaştırmaları `fold` kullanır: `toLocaleLowerCase()` tarayıcı diline bakar, İngilizce tarayıcıda "İ" eşleşmez (CI yakaladı).

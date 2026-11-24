@@ -1,4 +1,4 @@
-import { dayText, parseNum, pct } from "kor/ui/util";
+import { dayText, fold, parseNum, pct } from "kor/ui/util";
 import LookupField from "kor/ui/LookupField";
 import TreeGrid from "kor/ui/TreeGrid";
 import Variants from "kor/ui/Variants";
@@ -771,4 +771,16 @@ QUnit.test("Yerel biçim: yüzde ve kısa tarih dile uyar", (assert) => {
 	assert.strictEqual(dayText("2026-03-02"), "03/02/2026");
 	assert.strictEqual(parseNum("45%"), 45);
 	config.setLanguage("tr");
+});
+
+QUnit.test("Arama Türkçe harflerde ve aksanda her tarayıcı dilinde çalışır", (assert) => {
+	assert.strictEqual(fold("İstanbul IŞIK ığdır"), "istanbul isik igdir");
+	assert.strictEqual(fold("a😀İ").length, "a😀İ".length);
+	const select = new SelectField({ items: [new Item({ key: "1", text: "İZMİR" }), new Item({ key: "2", text: "Şanlıurfa" })] });
+	const input = one(show(select), "input") as HTMLInputElement;
+	type(input, "sanli");
+	assert.strictEqual(all(document, ".korList [role=option]").length, 1);
+	type(input, "izm");
+	key(input, "Enter");
+	assert.strictEqual(select.getSelectedKey(), "1");
 });
