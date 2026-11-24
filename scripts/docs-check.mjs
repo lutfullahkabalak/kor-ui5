@@ -22,9 +22,10 @@ for (const u of pages) for (const [, href] of fs.readFileSync(path.join(dist, u,
 	const f = path.join(dist, href);
 	if (!fs.existsSync(href.endsWith("/") ? path.join(f, "index.html") : f)) bad(u, `kırık bağlantı ${href}`);
 }
-const browser = await puppeteer.launch({ ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : { channel: "chrome" }), args: process.env.CI ? ["--no-sandbox"] : [] });
 const queue = pages.filter((u) => /components\/.+|playground|^\/$|^\/tr\/$/.test(u));
+// Her işçiye ayrı Chrome: arka plandaki sekmede IntersectionObserver çalışmaz
 await Promise.all(Array.from({ length: 4 }, async () => {
+	const browser = await puppeteer.launch({ ...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : { channel: "chrome" }), args: process.env.CI ? ["--no-sandbox"] : [] });
 	for (let u; (u = queue.shift()); ) {
 		const p = await browser.newPage();
 		await p.setViewport({ width: 1360, height: 900 });
@@ -46,8 +47,8 @@ await Promise.all(Array.from({ length: 4 }, async () => {
 		if (shots) { fs.mkdirSync(shots, { recursive: true }); await p.evaluate(() => scrollTo(0, 0)); await p.screenshot({ path: path.join(shots, u.replace(/\W+/g, "_") + ".png"), fullPage: true }); }
 		await p.close();
 	}
+	await browser.close();
 }));
-await browser.close();
 server.close();
 console.log(`${pages.length} sayfa, ${failed} hata`);
 process.exit(failed ? 1 : 0);

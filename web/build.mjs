@@ -16,6 +16,12 @@ const T = {
 };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const inline = (s) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+// İçerik dosyasındaki girinti örnek koda taşınmasın: ilk satır dışındakilerin ortak girintisi silinir
+const dedent = (s) => {
+	const [first, ...rest] = s.trim().split("\n");
+	const cut = Math.min(...rest.filter((l) => l.trim()).map((l) => /^\t*/.exec(l)[0].length), 99);
+	return [first, ...rest.map((l) => l.slice(cut))].join("\n");
+};
 const pick = (v, lang) => (v && typeof v === "object" && "en" in v ? v[lang] : v);
 const loc = (s, lang) => s.replace(/\[\[([\s\S]*?)\|\|([\s\S]*?)\]\]/g, (_, en, tr) => (lang === "en" ? en : tr));
 const slug = (n) => n.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
@@ -108,7 +114,7 @@ const guessKind = (l) => (/xml|html/.test(l) ? "xml" : "js");
 
 // ---- Canlı örnek
 function sampleHtml(s, id, lang, big) {
-	const t = T[lang], xml = loc(s.xml, lang).trim(), js = s.js ? loc(s.js, lang).trim() : "";
+	const t = T[lang], xml = dedent(loc(s.xml, lang)), js = s.js ? dedent(loc(s.js, lang)) : "";
 	// [[en||tr]] işaretleri JSON içinde de çözülür
 	const data = s.data ? loc(JSON.stringify(s.data), lang) : "";
 	const tabs = [["xml", "View.xml", xml], ["js", "Controller.js", js || "// sap.ui.define([\"sap/ui/core/mvc/Controller\"], (Controller) => Controller.extend(\"sample.Main\", {}));"]];

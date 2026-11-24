@@ -61,3 +61,4 @@ main { padding: 48px clamp(16px, 4vw, 56px) 100px; min-width: 0; } .wide main { 
 	main { padding-top: 28px; } .sampleStage { padding: 18px; } .sampleBig .sampleBox, .pair { grid-template-columns: minmax(0, 1fr); } .sampleBig .sampleCode { order: 0; } .sampleBig .code { min-height: 200px; } .pair { margin: 56px 0; } .compList li, .keys div { grid-template-columns: 1fr; gap: 2px; }
 }
 .iconNames { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: .3rem 1rem; padding: 0; list-style: none; }
+@media (max-width: 900px) { .topNav { scrollbar-width: none; mask: linear-gradient(to left, transparent, #000 36px); padding-right: 36px; } }

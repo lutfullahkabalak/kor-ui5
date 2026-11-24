@@ -32,3 +32,4 @@ body > [data-sap-ui-area], body > .sapUiView { height: 100%; }
 .dFill { position: relative; }
 .dTabs .dRow:first-child { border-top: 0; }
 .dFill > .korGrid.dGrow { overflow: hidden; }
+@media (max-width: 560px) { .korTopTitle { display: none; } .korTop { justify-content: flex-end; } }
