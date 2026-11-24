@@ -92,9 +92,9 @@
 			const host = document.createElement("div");
 			stage.append(host);
 			view.placeAt(host);
-			s.dataset.state = "ok";
+			s.dataset.sampleState = "ok";
 		} catch (e) {
-			s.dataset.state = "error";
+			s.dataset.sampleState = "error";
 			const p = document.createElement("pre");
 			p.className = "sampleError";
 			p.setAttribute("role", "alert");

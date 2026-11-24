@@ -5,13 +5,12 @@ export default {
 	samples: [
 		{
 			title: { en: "Open and dismiss", tr: "Aç ve kapat" },
-			xml: `<k:Button text="[[Show details||Ayrıntıyı göster]]" press=".onOpen">
-				<k:dependents>
-					<k:Sheet id="details" title="[[Order SO-104||Sipariş SO-104]]">
-						<k:Text text="[[The order is waiting for packing.||Sipariş paketleme bekliyor.]]"/>
-					</k:Sheet>
-				</k:dependents>
-			</k:Button>`,
+			xml: `<k:Stack align="flex-start">
+				<k:Button text="[[Show details||Ayrıntıyı göster]]" press=".onOpen"/>
+				<k:Sheet id="details" title="[[Order SO-104||Sipariş SO-104]]">
+					<k:Text text="[[The order is waiting for packing.||Sipariş paketleme bekliyor.]]"/>
+				</k:Sheet>
+			</k:Stack>`,
 			js: `sap.ui.define(["sap/ui/core/mvc/Controller"], (Controller) => Controller.extend("sample.BasicSheet", {
 				onOpen() {
 					this.byId("details").setOpen(true);
@@ -20,14 +19,13 @@ export default {
 		},
 		{
 			title: { en: "A footer action", tr: "Alt çubukta işlem" },
-			xml: `<k:Button text="[[Review the shipment||Sevkiyatı incele]]" press=".onOpen">
-				<k:dependents>
-					<k:Sheet id="details" title="[[Shipment SH-104||Sevkiyat SH-104]]" subtitle="[[North warehouse||Kuzey deposu]]">
-						<k:content><k:Text text="[[Three pallets are ready for collection.||Üç palet teslim almaya hazır.]]"/></k:content>
-						<k:footer><k:Button kind="primary" text="[[Mark as reviewed||İncelendi olarak işaretle]]" press=".onDone"/></k:footer>
-					</k:Sheet>
-				</k:dependents>
-			</k:Button>`,
+			xml: `<k:Stack align="flex-start">
+				<k:Button text="[[Review the shipment||Sevkiyatı incele]]" press=".onOpen"/>
+				<k:Sheet id="details" title="[[Shipment SH-104||Sevkiyat SH-104]]" subtitle="[[North warehouse||Kuzey deposu]]">
+					<k:content><k:Text text="[[Three pallets are ready for collection.||Üç palet teslim almaya hazır.]]"/></k:content>
+					<k:footer><k:Button kind="primary" text="[[Mark as reviewed||İncelendi olarak işaretle]]" press=".onDone"/></k:footer>
+				</k:Sheet>
+			</k:Stack>`,
 			js: `sap.ui.define(["sap/ui/core/mvc/Controller", "kor/ui/Toast"], (Controller, Toast) => Controller.extend("sample.ShipmentSheet", {
 				onOpen() {
 					this.byId("details").setOpen(true);
