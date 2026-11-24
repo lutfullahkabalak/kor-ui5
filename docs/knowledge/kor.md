@@ -65,3 +65,4 @@ Bulunan ve düzeltilen hatalar: V2 tarihinin bir gün kayması, Decimal'in sayı
 - Yüzde `pct`, tablo tarihi `dayText` ile yerel biçimlenir; metin içine `%` veya `dd.MM` gömme.
 - `build:interfaces` gerekirse iki kez koşar: temiz klonda TreeGrid, DataGrid arayüzü henüz yokken üretilemez.
 - Arama karşılaştırmaları `fold` kullanır: `toLocaleLowerCase()` tarayıcı diline bakar, İngilizce tarayıcıda "İ" eşleşmez (CI yakaladı).
+- 0.1.0 npm ve GitHub'da yayında (2026-11-24). npm yayını iki adımlı doğrulama ister: sahibi kendi terminalinde `cd npm && npm publish --access public` çalıştırır; yeni sürüm birkaç dakika işlenir (önce `0.0.0-stage` görünür).
