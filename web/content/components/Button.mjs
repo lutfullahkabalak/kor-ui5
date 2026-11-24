@@ -22,7 +22,7 @@ export default {
 	samples: [
 		{
 			title: { en: "Kinds", tr: "Türler" },
-			xml: `<k:Stack row="true" gap="10" wrap="true">
+			xml: `<k:Stack row="true" gap="10">
 	<k:Button kind="primary" text="[[Save||Kaydet]]" press=".onPress"/>
 	<k:Button kind="accent" text="[[Approve||Onayla]]" icon="check" press=".onPress"/>
 	<k:Button text="[[Duplicate||Çoğalt]]" press=".onPress"/>
