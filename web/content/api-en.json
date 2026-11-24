@@ -1,0 +1,14 @@
+{
+	"Button": "A button. With `menuItems` it opens a menu.",
+	"Button.text": "Text",
+	"Button.icon": "Icon name",
+	"Button.kind": "primary, accent, neutral, ghost or danger",
+	"Button.hint": "Shortcut shown in the button",
+	"Button.label": "Accessible name and tooltip of an icon-only button",
+	"Button.loading": "An operation is running",
+	"Button.enabled": "Can be used",
+	"Button.wide": "Fills its container",
+	"Button.menuItems": "Menu rows",
+	"Button.press": "Pressed",
+	"Button.menuSelect": "A menu row was chosen"
+}

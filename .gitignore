@@ -6,3 +6,9 @@ release/
 .env*
 .DS_Store
 *.gen.d.ts
+web/dist/
+web/node_modules/
+web/examples/*/node_modules/
+web/examples/*/dist/
+.cloudflare/
+.wrangler/
