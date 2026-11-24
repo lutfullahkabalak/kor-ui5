@@ -66,3 +66,11 @@ Bulunan ve düzeltilen hatalar: V2 tarihinin bir gün kayması, Decimal'in sayı
 - `build:interfaces` gerekirse iki kez koşar: temiz klonda TreeGrid, DataGrid arayüzü henüz yokken üretilemez.
 - Arama karşılaştırmaları `fold` kullanır: `toLocaleLowerCase()` tarayıcı diline bakar, İngilizce tarayıcıda "İ" eşleşmez (CI yakaladı).
 - 0.1.0 npm ve GitHub'da yayında (2026-11-24). npm yayını iki adımlı doğrulama ister: sahibi kendi terminalinde `cd npm && npm publish --access public` çalıştırır; yeni sürüm birkaç dakika işlenir (önce `0.0.0-stage` görünür).
+
+## Dokümantasyon ve örnekler (2026-11-25)
+
+- `web/PLAN.md` B ve C tamamlandı. Kökte `npm run build` sonrası `npm run docs` ile `web/dist` üretilir. `npm run docs:check -- /components/` bileşenleri, süzgeçsiz komut tüm siteyi denetler. Bu turda 114 sayfa, eksik içerik/API 0. QUnit 1.108.55 ve 1.154.0’da 56/56.
+- `web/content/components` sayfaları alt öğeleri `children` ile ekler. API Türkçesi `src` JSDoc’undan, İngilizcesi `web/content/api-en.json` dosyasından gelir. Aynı adlı olay ve metot varsa metot anahtarında `()` kullanılır. Örnek kapsayıcısının `data-sample-state` özniteliği MessageList’in `[data-state]` aramasıyla çakışmaz.
+- Demo varsayılan İngilizce. `?lang=en|tr` başlatma sırasında UI5 dilini belirler. Metinler `test/demo/i18n*.properties` dosyalarındadır. Dil geçişi sayfayı yeniler, ekranı ve görünümü URL üzerinden korur. Sipariş süzgeçlerinin kayıtlı görünümleri dile göre ayrı tutulur çünkü durum değerleri yerelleştirilir.
+- `web/examples/orders`, yayımlanmış `kor-ui5@0.1.0` ile UI5 CLI üzerinden çalışır. `npm i && npx ui5 serve` sonrası sunucunun yazdığı adreste `/index.html` açılır. Site derlemesi bu projeyi arşivler ve statik kopyanın UI5 adresiyle `kor.ui` kaynak kökünü değiştirir.
+- `node scripts/shots.mjs` kök derlemenin `site/` çıktısından 1440×900 ana sayfa görsellerini üretir. Tarayıcı yolu gerekirse `CHROME_PATH` ile verilir. Siteyi yerelde ve iki dilde doğruladık. Yayın adımları `web/PLAN.md` D bölümündedir.

@@ -35,9 +35,19 @@ Varsayılan dil İngilizce (`/`), Türkçe `/tr/`. Her metin iki dilde. Yayın: 
 - [x] C1 `test/demo` iki dilli: `?lang=en|tr` (varsayılan en), sayfa içi EN/TR geçişi, veri ve tarih/sayı biçimi dahil. `npm test` bozulmasın. Docs'a dönüş bağlantısı.
 - [x] C2 `web/examples/orders/`: indirilebilir küçük UI5 projesi (npm'deki `kor-ui5`, manifest, i18n en+tr, XML view, liste + ayrıntı paneli + form + JSON verisi, README en+tr). `web/examples/*` siteye zip olarak ve çalışır halde (`/examples/orders/app/`) konur; build.mjs bunu yapar (zip: sistem `zip`).
 - [x] C4 Ana sayfa görüntüleri: `scripts/shots.mjs` (puppeteer-core) demodan en/tr × light/dark `web/assets/shots/{flow,plan}-{en|tr}-{light|dark}.jpg` üretir (1440×900, kalite 82); `content/home.mjs` bunları temaya göre gösterir (CSS `[data-kor-mode]` ile).
-- [ ] C3 `/examples/` sayfası (en/tr): demo ve orders tanıtımı, canlı bağlantı, kaynak/zip.
+- [x] C3 `/examples/` sayfası (en/tr): demo ve orders tanıtımı, canlı bağlantı, kaynak/zip.
 
 ## D. Yayın (Claude)
 - [ ] Codex işini gözden geçir, tarayıcıda dolaş (açık/koyu, 390 px, en/tr)
 - [ ] `cf deploy`, özel alan adı, canlı doğrulama
 - [ ] README ve bilgi tabanı bağlantıları
+
+## Codex notları
+
+- Yerel derlemede 114 sayfa üretildi. Eksik içerik ve İngilizce API açıklaması 0. Chrome’da bileşen sayfaları, tüm site bağlantıları ve seçili örnek etkileşimleri geçti. QUnit sonucu her UI5 sürümünde 39 Kor ve 17 OData testi.
+- Sipariş projesi dokümantasyondaki statik adresten ve indirilen arşiv açılarak denendi. Arşivde `npm i && npx ui5 serve` npm’den yayımlanmış `kor-ui5@0.1.0` sürümünü kullandı. UI5 CLI sunucusunun yazdığı adreste `/index.html` açılır. `npm audit --omit=dev` bulgu vermedi. Kurulum, geliştirme bağımlılıkları için 21 orta ve 4 yüksek düzeyli bulgu bildirdi.
+- `Stack` metadata’sında `wrap` yok. Button örneğindeki öznitelik kaldırıldı. `Sheet` kendi popup’ını yaratmadığı için çizilen görünüm ağacına eklenmeli. Örnek bu düzenle değiştirildi.
+- `MessageList` tıklanan düğmenin üst öğelerinde sınırsız `[data-state]` arıyor. Bu yüzden örnek kapsayıcısının durum özniteliği mesaj tıklamasını yutuyordu. Dokümantasyon motoru `data-sample-state` kullanıyor. Kütüphane davranışı aynı.
+- `Tooltip` denetiminde düğmenin oluşturduğu `data-kor-tip`, `dependents` içindeki ipucundan önce geliyor. Ayrı açıklama gösteren örnekte düğmenin görünür metni kullanıldı.
+- `Theme.set()` vurgu rengini doğrulamadan önce iç ayarlara yazıyor. Geçersiz bir renk sonraki çağrıları da hata durumuna sokabiliyor. Geçerli bir renk verilince düzeliyor.
+- Gerçek SAP Gateway/RAP, gerçek OData V2 ağaç servisi, MessageManager, ekran okuyucu, dokunmatik sürükleme, Safari/Firefox ve ABAP BSP/Launchpad denenmedi. D bölümündeki yayın işleri bekliyor.
