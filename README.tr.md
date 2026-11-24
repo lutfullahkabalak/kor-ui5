@@ -1,6 +1,6 @@
 # Kor
 
-[English](README.md) · [Canlı demo](https://lutfullahkabalak.github.io/kor-ui5/)
+[English](README.md) · [Dokümantasyon](https://korui5.abapnews.com/tr/) · [Canlı demo](https://korui5.abapnews.com/demo/?lang=tr)
 
 ![Kor akış ekranı](https://raw.githubusercontent.com/lutfullahkabalak/kor-ui5/main/docs/img/akis-light.jpg)
 

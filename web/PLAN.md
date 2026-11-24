@@ -38,9 +38,9 @@ Varsayılan dil İngilizce (`/`), Türkçe `/tr/`. Her metin iki dilde. Yayın: 
 - [x] C3 `/examples/` sayfası (en/tr): demo ve orders tanıtımı, canlı bağlantı, kaynak/zip.
 
 ## D. Yayın (Claude)
-- [ ] Codex işini gözden geçir, tarayıcıda dolaş (açık/koyu, 390 px, en/tr)
-- [ ] `cf deploy`, özel alan adı, canlı doğrulama
-- [ ] README ve bilgi tabanı bağlantıları
+- [x] Codex işini gözden geçir, tarayıcıda dolaş (açık/koyu, 390 px, en/tr)
+- [x] `cf deploy`, özel alan adı, canlı doğrulama
+- [x] README ve bilgi tabanı bağlantıları
 
 ## Codex notları
 

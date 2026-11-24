@@ -5,3 +5,4 @@ Bilgi tabanı: `docs/knowledge/kor.md`. İşe başlamadan oku, anlamlı iş biti
 - `npm ci`, `npm start` (1.108), `npm run start:latest`, `npm test` (iki sürüm, yerel Chrome), `npm run build`
 - Taban UI5 1.108. `*.gen.d.ts` ve `src/icons.ts` üretilir.
 - Herkese açık depo: gizli bilgi, iç adres ve müşteri adı koyma.
+- Doküman sitesi `web/`: `npm run build && npm run docs && npm run docs:check`; yayın `cd web && npm ci && npx cf deploy ./dist` (yalnız sahibi isteyince). Yeni bileşen: `web/content/nav.mjs`, `web/content/components/`, `web/content/api-en.json`.
