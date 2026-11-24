@@ -18,8 +18,8 @@ export default {
 			}));`
 		},
 		{
-			title: { en: "Explain an icon button", tr: "Simge düğmesini açıkla" },
-			xml: `<k:Button kind="ghost" icon="download" label="[[Export CSV||CSV dışa aktar]]" press=".onExport">
+			title: { en: "Explain an export action", tr: "Dışa aktarma işlemini açıkla" },
+			xml: `<k:Button kind="ghost" icon="download" text="[[Export CSV||CSV dışa aktar]]" press=".onExport">
 				<k:dependents><k:Tooltip text="[[Download all filtered rows as CSV||Süzülen tüm satırları CSV olarak indir]]"/></k:dependents>
 			</k:Button>`,
 			js: `sap.ui.define(["sap/ui/core/mvc/Controller", "kor/ui/Toast"], (Controller, Toast) => Controller.extend("sample.ExportTip", {

@@ -29,7 +29,7 @@ Varsayılan dil İngilizce (`/`), Türkçe `/tr/`. Her metin iki dilde. Yayın: 
 - [x] B4 Planlama: Board(BoardColumn, BoardCard), Schedule(ScheduleLane, ScheduleTask), Stages(Stage), Activity(ActivityItem)
 - [x] B5 Giriş: TextField, NumberField, SelectField, MultiSelect, LookupField, DateField, DateRangeField, RadioGroup(RadioItem), Toggle, Check, Segmented, FileDrop(FileItem), Form(FormSection)
 - [x] B6 Temel: HoldButton, Status, Person, Icon, Message, MessageList(MessageItem), Skeleton, Empty, Text, Stack (Icon sayfasında tüm simge adları listelensin)
-- [ ] B7 Kılavuzlar `content/guides/`: getting-started, no-build (ABAP BSP/zip), theming, odata, models-and-binding, accessibility, localization, limits. Kaynak: README, docs/knowledge/kor.md, src. Doğrulanmamışı "not tested" diye yaz.
+- [x] B7 Kılavuzlar `content/guides/`: getting-started, no-build (ABAP BSP/zip), theming, odata, models-and-binding, accessibility, localization, limits. Kaynak: README, docs/knowledge/kor.md, src. Doğrulanmamışı "not tested" diye yaz.
 
 ## C. Örnek uygulamalar (Codex)
 - [ ] C1 `test/demo` iki dilli: `?lang=en|tr` (varsayılan en), sayfa içi EN/TR geçişi, veri ve tarih/sayı biçimi dahil. `npm test` bozulmasın. Docs'a dönüş bağlantısı.
