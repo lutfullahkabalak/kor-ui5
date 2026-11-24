@@ -3,6 +3,7 @@ import Controller from "sap/ui/core/mvc/Controller";
 import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import type Context from "sap/ui/model/Context";
 import type ListBinding from "sap/ui/model/ListBinding";
 import type Board from "kor/ui/Board";
@@ -20,10 +21,11 @@ import Toast from "kor/ui/Toast";
 import { num } from "kor/ui/util";
 import { model as data, periods, stageStatus } from "./data";
 import type { Order } from "./data";
+import { bundle, language, t } from "./i18n";
 
 // Olay parametreleri 1.108 tiplerinde genel kayıttır
 const params = (event: Event): unknown => event.getParameters();
-const titles: Record<string, string> = { akis: "Akış", siparis: "Siparişler", pano: "İş panosu", plan: "Üretim planı", maliyet: "Maliyet ağacı", bilesen: "Bileşenler" };
+const pages = new Set(["akis", "siparis", "pano", "plan", "maliyet", "bilesen"]);
 
 /** @namespace kor.ui.demo */
 export default class Main extends Controller {
@@ -34,9 +36,11 @@ export default class Main extends Controller {
 		const json = new JSONModel(data);
 		json.setSizeLimit(20000);
 		this.getView()!.setModel(json);
+		this.getView()!.setModel(new ResourceModel({ bundle }), "i18n");
+		json.setProperty("/look/mode", Theme.get().mode);
 		json.setProperty("/ids/tax", this.byId("tax")!.getId());
 		const hash = location.hash.slice(1);
-		if (titles[hash]) this.go(hash);
+		if (pages.has(hash)) this.go(hash);
 	}
 	private go(page: string): void {
 		this.json().setProperty("/page", page);
@@ -46,12 +50,25 @@ export default class Main extends Controller {
 	onNavigate(event: Event): void {
 		this.go((params(event) as { key: string }).key);
 	}
+	onLanguage(event: Event): void {
+		const { key } = params(event) as { key: string };
+		if (key === language) return;
+		const url = new URL(location.href);
+		url.searchParams.set("lang", key);
+		url.searchParams.set("mode", Theme.get().mode);
+		location.assign(url);
+	}
+	onDocs(): void {
+		const docs = language === "tr" ? "/tr/" : "/";
+		const integrated = location.pathname === "/demo/" || location.pathname === "/demo/index.html";
+		location.assign(integrated ? docs : `https://korui5.abapnews.com${docs}`);
+	}
 	onPalette(): void {
 		(this.byId("palette") as CommandPalette).open();
 	}
 	onCommand(event: Event): void {
 		const key = (params(event) as { key: string }).key;
-		if (titles[key]) this.go(key);
+		if (pages.has(key)) this.go(key);
 		else if (key === "theme") this.onMode();
 		else if (key === "look") this.onLook();
 		else if (key === "rtl") document.documentElement.dir = document.documentElement.dir === "rtl" ? "ltr" : "rtl";
@@ -59,7 +76,7 @@ export default class Main extends Controller {
 			this.go("siparis");
 			const bar = this.byId("filter") as FilterBar;
 			bar.clear();
-			bar.addToken("status", "EQ", "Bloke");
+			bar.addToken("status", "EQ", t("blocked"));
 		} else if (key === "big") {
 			this.go("siparis");
 			const bar = this.byId("filter") as FilterBar;
@@ -95,13 +112,13 @@ export default class Main extends Controller {
 	onStage(event: Event): void {
 		const key = (params(event) as { key: string }).key;
 		const node = (this.json().getProperty("/flow/nodes") as { key: string; label: string }[]).find((n) => n.key === key);
-		this.json().setProperty("/stageTitle", node ? `${node.label} durağındaki siparişler` : "Son siparişler");
+		this.json().setProperty("/stageTitle", node ? t("stepOrders", node.label) : t("latestOrders"));
 		((this.byId("stageGrid") as DataGrid).getBinding("rows") as ListBinding).filter(node ? [new Filter("status", FilterOperator.EQ, stageStatus[key])] : []);
 	}
 	onDecide(event: Event): void {
 		const button = event.getSource() as HoldButton;
 		const at = this.json().getProperty("/decision") as number;
-		Toast.show("Karar kaydedildi", { text: data.decisions[at].firm, actionText: "Geri al", action: () => this.showDecision(at) });
+		Toast.show(t("decisionSaved"), { text: data.decisions[at].firm, actionText: t("undo"), action: () => this.showDecision(at) });
 		window.setTimeout(() => {
 			button.setDone(false);
 			this.showDecision(at + 1);
@@ -125,7 +142,7 @@ export default class Main extends Controller {
 		}
 	}
 	decisionText(at: number): string {
-		return `${at + 1} / ${data.decisions.length}`;
+		return `${num(at + 1)} / ${num(data.decisions.length)}`;
 	}
 	decisionOpen(at: number): boolean {
 		return at < data.decisions.length;
@@ -147,7 +164,7 @@ export default class Main extends Controller {
 	onPicked(event: Event): void {
 		const count = (params(event) as { contexts: Context[] }).contexts.length;
 		this.json().setProperty("/picked", count);
-		this.json().setProperty("/pickedText", `${num(count)} sipariş seçili`);
+		this.json().setProperty("/pickedText", t(count === 1 ? "orderSelected" : "ordersSelected", num(count)));
 	}
 	onBulkClear(): void {
 		(this.byId("grid") as DataGrid).clearSelection();
@@ -155,17 +172,17 @@ export default class Main extends Controller {
 	onBulk(): void {
 		const contexts = (this.byId("grid") as DataGrid).getSelectedContexts();
 		const before = contexts.map((c) => c.getProperty("status") as string);
-		contexts.forEach((c) => this.json().setProperty("status", "Onayda", c, true));
+		contexts.forEach((c) => this.json().setProperty("status", t("pending"), c, true));
 		this.json().refresh(true);
 		this.onBulkClear();
-		Toast.show(`${num(contexts.length)} sipariş onaya gönderildi`, { actionText: "Geri al", action: () => {
+		Toast.show(t(contexts.length === 1 ? "oneOrderSent" : "ordersSent", num(contexts.length)), { actionText: t("undo"), action: () => {
 			contexts.forEach((c, i) => this.json().setProperty("status", before[i], c, true));
 			this.json().refresh(true);
 		} });
 	}
 	onCell(event: Event): void {
 		const { path, oldValue, context } = params(event) as { path: string; oldValue: unknown; context: Context };
-		Toast.show("Değişiklik kaydedildi", { actionText: "Geri al", duration: 3000, action: () => {
+		Toast.show(t("changeSaved"), { actionText: t("undo"), duration: 3000, action: () => {
 			this.json().setProperty(path, oldValue, context);
 			(this.byId("grid") as DataGrid).invalidate();
 		} });
@@ -178,13 +195,14 @@ export default class Main extends Controller {
 	}
 	onTaskChange(event: Event): void {
 		const { task, conflict } = params(event) as { task: { getTitle(): string }; conflict: boolean };
-		if (conflict) Toast.show(`${task.getTitle()} başka bir işle çakışıyor`, { state: "danger" });
+		if (conflict) Toast.show(t("taskConflict", task.getTitle()), { state: "danger" });
 	}
 	onMenu(event: Event): void {
-		Toast.show(`Seçildi: ${(params(event) as { key: string }).key}`, { state: "info" });
+		const { key } = params(event) as { key: string };
+		Toast.show(t("menuSelected", t(key)), { state: "info" });
 	}
 	onToast(): void {
-		Toast.show("Fatura gönderildi", { text: "Poyraz Otomotiv, 486.200,00 TRY", actionText: "Geri al" });
+		Toast.show(t("invoiceSent"), { text: `Poyraz Otomotiv, ${num(486200, 2)} TRY`, actionText: t("undo") });
 	}
 	onHoldReset(): void {
 		(this.byId("holdSample") as HoldButton).setDone(false);
@@ -209,29 +227,29 @@ export default class Main extends Controller {
 		if (!(this.byId("newForm") as Form).validate()) return;
 		const draft = this.json().getProperty("/draft") as Order;
 		const id = String(4510001 + (this.json().getProperty("/orders") as Order[]).length - 10000);
-		this.json().setProperty("/orders", [{ ...draft, id, status: "Taslak", currency: "TRY", progress: 0, owner: "Elif Aydın", trend: [1, 1], note: "" }, ...(this.json().getProperty("/orders") as Order[])]);
+		this.json().setProperty("/orders", [{ ...draft, id, status: t("draft"), currency: "TRY", progress: 0, owner: "Elif Aydın", trend: [1, 1], note: "" }, ...(this.json().getProperty("/orders") as Order[])]);
 		this.json().setProperty("/newOpen", false);
-		Toast.show(`${id} oluşturuldu`, { text: draft.firm });
+		Toast.show(t("orderCreated", id), { text: draft.firm });
 	}
 	onValidate(): void {
-		if ((this.byId("sampleForm") as Form).validate()) Toast.show("Form tamam");
+		if ((this.byId("sampleForm") as Form).validate()) Toast.show(t("formComplete"));
 	}
 	async onAsk(): Promise<void> {
-		if (await Confirm.ask({ title: "Sipariş onaya gönderilsin mi?", text: "Onaylayan: Kerem Yalın. Gönderdikten sonra tutar değişmez.", confirmText: "Gönder" })) Toast.show("Onaya gönderildi");
+		if (await Confirm.ask({ title: t("approveQuestion"), text: t("approveHelp"), confirmText: t("send") })) Toast.show(t("sentForApproval"));
 	}
 	async onAskDanger(): Promise<void> {
-		if (await Confirm.ask({ title: "Ekim dönemi silinsin mi?", text: "1.284 hareket kalıcı olarak silinir. Geri alınamaz.", confirmText: "Dönemi sil", danger: true, type: "EKİM" })) Toast.show("Dönem silindi", { state: "danger" });
+		if (await Confirm.ask({ title: t("deleteOctober"), text: t("deleteOctoberHelp", num(1284)), confirmText: t("deletePeriod"), danger: true, type: t("octoberCode") })) Toast.show(t("periodDeleted"), { state: "danger" });
 	}
 	async onOrderMenu(event: Event): Promise<void> {
 		const key = (params(event) as { key: string }).key;
-		if (key !== "İptal") {
+		if (key !== "cancelOrder") {
 			this.onMenu(event);
 			return;
 		}
 		const id = this.json().getProperty("/order/id") as string;
-		if (await Confirm.ask({ title: `${id} iptal edilsin mi?`, text: "Ayrılan stok serbest kalır, müşteriye bilgi gider.", confirmText: "Siparişi iptal et", danger: true })) {
+		if (await Confirm.ask({ title: t("cancelQuestion", id), text: t("cancelHelp"), confirmText: t("cancelOrder"), danger: true })) {
 			this.json().setProperty("/sheet", false);
-			Toast.show(`${id} iptal edildi`, { state: "danger" });
+			Toast.show(t("orderCancelled", id), { state: "danger" });
 		}
 	}
 	onPopover(event: Event): void {
