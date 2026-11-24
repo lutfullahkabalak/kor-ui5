@@ -1,0 +1,42 @@
+{
+  "_version": "1.40.0",
+  "sap.app": {
+    "id": "kor.example.orders",
+    "type": "application",
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "i18n": {
+      "bundleUrl": "i18n/i18n.properties",
+      "supportedLocales": ["", "tr"],
+      "fallbackLocale": ""
+    },
+    "applicationVersion": { "version": "1.0.0" }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.108.0",
+      "libs": { "sap.ui.core": {}, "kor.ui": {} }
+    },
+    "rootView": {
+      "viewName": "kor.example.orders.view.Orders",
+      "type": "XML",
+      "id": "ordersView",
+      "async": true
+    },
+    "models": {
+      "": { "type": "sap.ui.model.json.JSONModel", "uri": "model/orders.json" },
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "kor.example.orders.i18n.i18n",
+          "supportedLocales": ["", "tr"],
+          "fallbackLocale": ""
+        }
+      }
+    }
+  }
+}

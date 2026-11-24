@@ -1,0 +1,40 @@
+<mvc:View controllerName="kor.example.orders.controller.Orders"
+    xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:k="kor.ui">
+  <k:Stack gap="20" class="ordersPage">
+    <k:Stack row="true" gap="12" align="center" justify="space-between">
+      <k:Text kind="display" text="{i18n>appTitle}"/>
+      <k:Segmented label="{i18n>language}" selectedKey="{ui>/language}" change=".onLanguage">
+        <core:Item key="en" text="EN"/>
+        <core:Item key="tr" text="TR"/>
+      </k:Segmented>
+    </k:Stack>
+    <k:Text kind="muted" text="{i18n>instructions}"/>
+    <k:DataGrid label="{i18n>appTitle}" rows="{/orders}" height="22rem" rowPress=".onOrder">
+      <k:columns>
+        <k:Column label="{i18n>order}" path="id" type="link" pinned="true" width="105"/>
+        <k:Column label="{i18n>customer}" path="customer" width="150" grow="1"/>
+        <k:Column label="{i18n>amount}" path="amount" type="currency" unitPath="currency" decimals="2" width="135"/>
+        <k:Column label="{i18n>deliveryDate}" path="due" type="date" width="135"/>
+        <k:Column label="{i18n>status}" path="status" type="status" states="{ui>/states}" formatter=".statusText" width="135"/>
+      </k:columns>
+    </k:DataGrid>
+
+    <k:Sheet open="{ui>/open}" title="{ui>/draft/customer}" subtitle="{ui>/draft/id}" close=".onClose">
+      <k:Form id="deliveryForm" stacked="true">
+        <k:FormSection title="{i18n>delivery}" text="{i18n>editDelivery}">
+          <k:DateField label="{i18n>deliveryDate}" required="true" value="{ui>/draft/due}"/>
+          <k:SelectField label="{i18n>status}" required="true" selectedKey="{ui>/draft/status}">
+            <core:Item key="open" text="{i18n>statusOpen}"/>
+            <core:Item key="packing" text="{i18n>statusPacking}"/>
+            <core:Item key="sent" text="{i18n>statusSent}"/>
+          </k:SelectField>
+          <k:TextField label="{i18n>note}" rows="3" value="{ui>/draft/note}"/>
+        </k:FormSection>
+      </k:Form>
+      <k:footer>
+        <k:Button text="{i18n>cancel}" press=".onClose"/>
+        <k:Button text="{i18n>save}" kind="primary" press=".onSave"/>
+      </k:footer>
+    </k:Sheet>
+  </k:Stack>
+</mvc:View>

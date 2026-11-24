@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kor Orders</title>
+  <link rel="stylesheet" href="app.css">
+  <script>
+    const language = new URLSearchParams(location.search).get("lang") === "tr" ? "tr" : "en";
+    window["sap-ui-config"] = { language };
+    document.documentElement.lang = language;
+  </script>
+  <script id="sap-ui-bootstrap"
+    src="resources/sap-ui-core.js"
+    data-sap-ui-async="true"
+    data-sap-ui-theme="sap_horizon"
+    data-sap-ui-compatVersion="edge"
+    data-sap-ui-xx-componentPreload="off"
+    data-sap-ui-resourceroots='{"kor.example.orders":"./"}'
+    data-sap-ui-onInit="module:sap/ui/core/ComponentSupport"></script>
+</head>
+<body class="kor">
+  <main data-sap-ui-component data-name="kor.example.orders" data-id="orders"></main>
+</body>
+</html>

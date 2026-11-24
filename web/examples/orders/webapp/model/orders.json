@@ -1,0 +1,8 @@
+{
+  "orders": [
+    { "id": "SO-104", "customer": "Aster", "amount": 12650.5, "currency": "EUR", "due": "2026-12-08", "status": "open", "note": "" },
+    { "id": "SO-105", "customer": "Mira", "amount": 3840, "currency": "EUR", "due": "2026-12-09", "status": "packing", "note": "" },
+    { "id": "SO-106", "customer": "Aster", "amount": 9105.25, "currency": "EUR", "due": "2026-12-11", "status": "sent", "note": "" },
+    { "id": "SO-107", "customer": "Luma", "amount": 5412.8, "currency": "EUR", "due": "2026-12-14", "status": "open", "note": "" }
+  ]
+}

@@ -33,7 +33,7 @@ Varsayılan dil İngilizce (`/`), Türkçe `/tr/`. Her metin iki dilde. Yayın: 
 
 ## C. Örnek uygulamalar (Codex)
 - [x] C1 `test/demo` iki dilli: `?lang=en|tr` (varsayılan en), sayfa içi EN/TR geçişi, veri ve tarih/sayı biçimi dahil. `npm test` bozulmasın. Docs'a dönüş bağlantısı.
-- [ ] C2 `web/examples/orders/`: indirilebilir küçük UI5 projesi (npm'deki `kor-ui5`, manifest, i18n en+tr, XML view, liste + ayrıntı paneli + form + JSON verisi, README en+tr). `web/examples/*` siteye zip olarak ve çalışır halde (`/examples/orders/app/`) konur; build.mjs bunu yapar (zip: sistem `zip`).
+- [x] C2 `web/examples/orders/`: indirilebilir küçük UI5 projesi (npm'deki `kor-ui5`, manifest, i18n en+tr, XML view, liste + ayrıntı paneli + form + JSON verisi, README en+tr). `web/examples/*` siteye zip olarak ve çalışır halde (`/examples/orders/app/`) konur; build.mjs bunu yapar (zip: sistem `zip`).
 - [ ] C4 Ana sayfa görüntüleri: `scripts/shots.mjs` (puppeteer-core) demodan en/tr × light/dark `web/assets/shots/{flow,plan}-{en|tr}-{light|dark}.jpg` üretir (1440×900, kalite 82); `content/home.mjs` bunları temaya göre gösterir (CSS `[data-kor-mode]` ile).
 - [ ] C3 `/examples/` sayfası (en/tr): demo ve orders tanıtımı, canlı bağlantı, kaynak/zip.
 
