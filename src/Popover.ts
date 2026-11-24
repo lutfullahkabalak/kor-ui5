@@ -40,6 +40,7 @@ export default class Popover extends Control {
 	private popup?: Popup;
 	private anchor?: HTMLElement;
 
+	/** Katmanı verilen kontrolün veya HTML öğesinin yanında açar. */
 	openBy(opener: Control | HTMLElement): void {
 		const dom = (opener instanceof HTMLElement ? opener : opener.getDomRef()) as HTMLElement;
 		if (this.isOpen() && this.anchor === dom) {
@@ -65,9 +66,11 @@ export default class Popover extends Control {
 		const side = isRtl() ? "right" : "left";
 		this.popup.open(0, `${side} top` as never, `${side} bottom` as never, dom as never, "0 6", "flipfit");
 	}
+	/** Katmanın açık olup olmadığını döndürür. */
 	isOpen(): boolean {
 		return !!this.popup?.isOpen();
 	}
+	/** Katmanı kapatır. */
 	close(): void {
 		this.popup?.close(0);
 	}

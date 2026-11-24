@@ -11,8 +11,8 @@ const ORIGIN = "https://korui5.abapnews.com", REPO = "https://github.com/lutfull
 const version = JSON.parse(fs.readFileSync(path.join(root, "package.json"))).version;
 const apiEn = JSON.parse(fs.readFileSync(path.join(here, "content/api-en.json")));
 const T = {
-	en: { docs: "Documentation", components: "Components", guides: "Guides", demo: "Demo", playground: "Playground", examples: "Examples", search: "Search", api: "API", props: "Properties", aggs: "Aggregations", events: "Events", methods: "Methods", name: "Name", type: "Type", def: "Default", desc: "Description", use: "When to use", avoid: "When not to use", keyboard: "Keyboard", related: "Related", samples: "Examples", source: "Source", run: "Run", copy: "Copy", copied: "Copied", open: "Open in playground", theme: "Switch light or dark", menu: "Menu", home: "Home", inherits: "Also has everything from", data: "Data", notFound: "Page not found", notFoundText: "The address may have changed. Start from the component list.", skip: "Skip to content", loading: "Loading the example", none: "No results", pgText: "Edit the view and the controller, then press Run. Nothing leaves your browser.", compText: "Every control, with live examples and its full API.", failed: "The example could not start. Check your network connection and reload.", reset: "Reset" },
-	tr: { docs: "Dokümantasyon", components: "Bileşenler", guides: "Kılavuzlar", demo: "Demo", playground: "Deneme alanı", examples: "Örnekler", search: "Ara", api: "API", props: "Özellikler", aggs: "Alt öğeler", events: "Olaylar", methods: "Metotlar", name: "Ad", type: "Tür", def: "Varsayılan", desc: "Açıklama", use: "Ne zaman kullanılır", avoid: "Ne zaman kullanılmaz", keyboard: "Klavye", related: "İlgili", samples: "Örnekler", source: "Kaynak kod", run: "Çalıştır", copy: "Kopyala", copied: "Kopyalandı", open: "Deneme alanında aç", theme: "Açık veya koyu görünüme geç", menu: "Menü", home: "Ana sayfa", inherits: "Şunun tüm üyelerini de taşır:", data: "Veri", notFound: "Sayfa bulunamadı", notFoundText: "Adres değişmiş olabilir. Bileşen listesinden başlayabilirsiniz.", skip: "İçeriğe geç", loading: "Örnek yükleniyor", none: "Sonuç yok", pgText: "Görünümü ve denetleyiciyi düzenleyip Çalıştır düğmesine basın. Hiçbir şey tarayıcınızdan çıkmaz.", compText: "Her bileşen, canlı örnekleri ve tam API'siyle.", failed: "Örnek başlatılamadı. Ağ bağlantısını denetleyip sayfayı yenileyin.", reset: "Sıfırla" }
+	en: { docs: "Documentation", components: "Components", guides: "Guides", demo: "Demo", playground: "Playground", examples: "Examples", search: "Search", api: "API", props: "Properties", aggs: "Aggregations", associations: "Associations", events: "Events", methods: "Methods", name: "Name", type: "Type", def: "Default", desc: "Description", use: "When to use", avoid: "When not to use", keyboard: "Keyboard", related: "Related", samples: "Examples", source: "Source", run: "Run", copy: "Copy", copied: "Copied", open: "Open in playground", theme: "Switch light or dark", menu: "Menu", home: "Home", inherits: "Also has everything from", data: "Data", notFound: "Page not found", notFoundText: "The address may have changed. Start from the component list.", skip: "Skip to content", loading: "Loading the example", none: "No results", pgText: "Edit the view and the controller, then press Run. Nothing leaves your browser.", compText: "Every control, with live examples and its full API.", failed: "The example could not start. Check your network connection and reload.", reset: "Reset" },
+	tr: { docs: "Dokümantasyon", components: "Bileşenler", guides: "Kılavuzlar", demo: "Demo", playground: "Deneme alanı", examples: "Örnekler", search: "Ara", api: "API", props: "Özellikler", aggs: "Alt öğeler", associations: "İlişkiler", events: "Olaylar", methods: "Metotlar", name: "Ad", type: "Tür", def: "Varsayılan", desc: "Açıklama", use: "Ne zaman kullanılır", avoid: "Ne zaman kullanılmaz", keyboard: "Klavye", related: "İlgili", samples: "Örnekler", source: "Kaynak kod", run: "Çalıştır", copy: "Kopyala", copied: "Kopyalandı", open: "Deneme alanında aç", theme: "Açık veya koyu görünüme geç", menu: "Menü", home: "Ana sayfa", inherits: "Şunun tüm üyelerini de taşır:", data: "Veri", notFound: "Sayfa bulunamadı", notFoundText: "Adres değişmiş olabilir. Bileşen listesinden başlayabilirsiniz.", skip: "İçeriğe geç", loading: "Örnek yükleniyor", none: "Sonuç yok", pgText: "Görünümü ve denetleyiciyi düzenleyip Çalıştır düğmesine basın. Hiçbir şey tarayıcınızdan çıkmaz.", compText: "Her bileşen, canlı örnekleri ve tam API'siyle.", failed: "Örnek başlatılamadı. Ağ bağlantısını denetleyip sayfayı yenileyin.", reset: "Sıfırla" }
 };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const inline = (s) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
@@ -28,7 +28,7 @@ const doc = (node) => (ts.getJSDocCommentsAndTags(node)[0]?.comment ?? "").toStr
 function api(name) {
 	const file = path.join(root, `src/${name}.ts`);
 	const sf = ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, true);
-	const res = { name, text: "", parent: "", properties: [], aggregations: [], events: [], methods: [] };
+	const res = { name, text: "", parent: "", properties: [], aggregations: [], associations: [], events: [], methods: [] };
 	const members = (obj) => obj.properties.filter((p) => p.name);
 	const prop = (obj, key) => members(obj).find((p) => p.name.getText() === key)?.initializer;
 	const raw = (n) => (n ? n.getText().replace(/^"(.*)"$/, "$1") : "");
@@ -41,7 +41,7 @@ function api(name) {
 				if (key === "metadata") {
 					let obj = m.initializer;
 					while (!ts.isObjectLiteralExpression(obj)) obj = obj.expression;
-					for (const kind of ["properties", "aggregations", "events"]) {
+					for (const kind of ["properties", "aggregations", "associations", "events"]) {
 						const list = prop(obj, kind);
 						if (!list) continue;
 						for (const p of members(list)) {
@@ -51,12 +51,12 @@ function api(name) {
 								res.events.push({ name: n, text: doc(p), params: ps ? members(ps).map((x) => `${x.name.getText()}: ${raw(prop(x.initializer, "type")) || "any"}`) : [] });
 							} else {
 								const t = ts.isStringLiteral(v) ? v.text : raw(prop(v, "type"));
-								const multi = kind === "aggregations" && !/false/.test(raw(prop(v, "multiple")));
+								const multi = (kind === "aggregations" || kind === "associations") && raw(prop(v, "multiple")) !== "false";
 								res[kind].push({ name: n, text: doc(p), type: t.replace("kor.ui.", "") + (multi ? "[]" : ""), def: ts.isObjectLiteralExpression(v) ? raw(prop(v, "defaultValue")) : "" });
 							}
 						}
 					}
-				} else if (ts.isMethodDeclaration(m) && doc(m) && !m.modifiers?.some((x) => [ts.SyntaxKind.PrivateKeyword, ts.SyntaxKind.ProtectedKeyword].includes(x.kind)) && !/^(on|init$|exit$|render|get\w*Role$)/.test(key)) res.methods.push({ name: key, text: doc(m), sig: `${key}(${m.parameters.map((p) => p.getText()).join(", ")})${m.type ? ": " + m.type.getText() : ""}` });
+				} else if (ts.isMethodDeclaration(m) && doc(m) && !m.modifiers?.some((x) => [ts.SyntaxKind.PrivateKeyword, ts.SyntaxKind.ProtectedKeyword].includes(x.kind)) && !/^(on|init$|exit$|render|handleEvent$|get\w*Role$)/.test(key)) res.methods.push({ name: key, text: doc(m), sig: `${key}(${m.parameters.map((p) => p.getText()).join(", ")})${m.type ? ": " + m.type.getText() : ""}` });
 			}
 		}
 		// Theme, Toast, Confirm: düz nesne
@@ -84,8 +84,9 @@ function apiHtml(name, lang, level = 3) {
 	if (/^(DataGrid|Button|TextField|SelectField)$/.test(a.parent)) s += `<p>${t.inherits} <a href="${compUrl(a.parent, lang)}">${a.parent}</a></p>`;
 	if (a.properties.length) s += `<${h}>${t.props}</${h}>` + table([t.name, t.type, t.def, t.desc], a.properties.map((p) => [code(p.name), code(p.type), code(p.def), desc(`${name}.${p.name}`, p.text, lang)]));
 	if (a.aggregations.length) s += `<${h}>${t.aggs}</${h}>` + table([t.name, t.type, t.desc], a.aggregations.map((p) => [code(p.name), code(p.type), desc(`${name}.${p.name}`, p.text, lang)]));
+	if (a.associations.length) s += `<${h}>${t.associations}</${h}>` + table([t.name, t.type, t.desc], a.associations.map((p) => [code(p.name), code(p.type), desc(`${name}.${p.name}`, p.text, lang)]));
 	if (a.events.length) s += `<${h}>${t.events}</${h}>` + table([t.name, t.type, t.desc], a.events.map((p) => [code(p.name), p.params.map(code).join("<br>"), desc(`${name}.${p.name}`, p.text, lang)]));
-	if (a.methods.length) s += `<${h}>${t.methods}</${h}>` + table([t.name, t.desc], a.methods.map((m) => [code(m.sig), desc(`${name}.${m.name}`, m.text, lang)]));
+	if (a.methods.length) s += `<${h}>${t.methods}</${h}>` + table([t.name, t.desc], a.methods.map((m) => [code(m.sig), desc(`${name}.${m.name}${a.events.some((e) => e.name === m.name) ? "()" : ""}`, m.text, lang)]));
 	if (a.types) s += `<pre class="code"><code>${hi(a.types.join("\n"), "js")}</code></pre>`;
 	return s;
 }

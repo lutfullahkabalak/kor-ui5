@@ -53,9 +53,11 @@ export default class CommandPalette extends Element {
 		document.removeEventListener("keydown", this);
 		this.close();
 	}
+	/** Paletin açık olup olmadığını döndürür. */
 	isOpen(): boolean {
 		return !!this.layer;
 	}
+	/** Paleti açar ve odağı arama alanına taşır. */
 	open(): void {
 		if (this.layer) return;
 		this.back = document.activeElement as HTMLElement;
@@ -102,6 +104,7 @@ export default class CommandPalette extends Element {
 		this.paint("");
 		input.focus();
 	}
+	/** Paleti kapatır. */
 	close(): void {
 		if (!this.layer) return;
 		this.layer.remove();

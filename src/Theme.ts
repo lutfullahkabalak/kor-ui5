@@ -18,12 +18,15 @@ function luminance(hex: string): number {
  * @namespace kor.ui
  */
 const Theme = {
+	/** Geçerli görünüm ayarlarının bir kopyasını döndürür. */
 	get(): ThemeSettings {
 		return { ...settings };
 	},
+	/** Sistem tercihi de dahil olmak üzere koyu görünümün etkinliğini döndürür. */
 	isDark(): boolean {
 		return settings.mode === "dark" || (settings.mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 	},
+	/** Verilen görünüm ayarlarını günceller ve sayfaya uygular. */
 	set(next: Partial<ThemeSettings>): void {
 		Object.assign(settings, next);
 		if (!/^#[0-9a-f]{6}$/i.test(settings.accent)) throw new Error("kor.ui.Theme: accent #rrggbb olmalı");

@@ -53,6 +53,7 @@ export default class Segmented extends Control {
 		this.sync();
 		this.fireChange({ key });
 	}
+	/** Seçili anahtarı ayarlar ve seçim göstergesini günceller. */
 	setSelectedKey(key: string): this {
 		this.setProperty("selectedKey", key, !!this.getDomRef());
 		if (this.getDomRef()) this.sync();

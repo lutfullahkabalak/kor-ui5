@@ -160,9 +160,11 @@ export default class TreeGrid extends DataGrid {
 		}
 		super.onkeydown(raw);
 	}
+	/** Sütun durumunu ve açık dalların yollarını döndürür. */
 	getState(): object {
 		return { ...super.getState(), open: [...this.open].sort() };
 	}
+	/** Sütun durumunu ve açık dalları geri yükler. */
 	setState(state: Parameters<DataGrid["setState"]>[0] & { open?: string[] }): void {
 		if (state.open) {
 			this.open = new Set(state.open);

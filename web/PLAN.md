@@ -23,7 +23,7 @@ Varsayılan dil İngilizce (`/`), Türkçe `/tr/`. Her metin iki dilde. Yayın: 
 - [x] Ana sayfa
 
 ## B. İçerik (Codex)
-- [ ] B1 `content/api-en.json`: tüm sınıf/özellik/olay/metot (`npm run docs` eksikleri sayar; 0 olmalı)
+- [x] B1 `content/api-en.json`: tüm sınıf/özellik/olay/metot (`npm run docs` eksikleri sayar; 0 olmalı)
 - [ ] B2 Uygulama: Shell(NavItem), CommandPalette(Command), Sheet, Dialog, Confirm, Popover, Tooltip, Tabs(Tab), Toast, Theme
 - [ ] B3 Veri: TreeGrid, FilterBar(FilterField), Variants, Flow(FlowNode, FlowLink), Trend(Series), Stat
 - [ ] B4 Planlama: Board(BoardColumn, BoardCard), Schedule(ScheduleLane, ScheduleTask), Stages(Stage), Activity(ActivityItem)

@@ -56,6 +56,7 @@ export default class Dialog extends Control {
 	};
 	private popup?: Popup;
 
+	/** Modal pencereyi açar veya kapatır. */
 	setOpen(open: boolean): this {
 		const was = this.getOpen();
 		this.setProperty("open", open, true);

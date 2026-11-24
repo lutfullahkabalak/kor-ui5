@@ -10,6 +10,7 @@ export type ToastOptions = { text?: string; state?: string; duration?: number; a
  * @namespace kor.ui
  */
 const Toast = {
+	/** Kısa bir bildirim ve isteğe bağlı bir işlem düğmesi gösterir. */
 	show(title: string, options: ToastOptions = {}): void {
 		let host = document.getElementById("kor-toasts");
 		if (!host) {

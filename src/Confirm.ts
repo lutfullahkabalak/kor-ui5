@@ -20,6 +20,7 @@ export type ConfirmOptions = {
  * @namespace kor.ui
  */
 const Confirm = {
+	/** Kullanıcı onaylarsa true, iptal eder veya kapatırsa false döndürür. */
 	ask(options: ConfirmOptions): Promise<boolean> {
 		return new Promise((resolve) => {
 			const done = (answer: boolean) => {
