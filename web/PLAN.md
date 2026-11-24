@@ -27,7 +27,7 @@ Varsayılan dil İngilizce (`/`), Türkçe `/tr/`. Her metin iki dilde. Yayın: 
 - [x] B2 Uygulama: Shell(NavItem), CommandPalette(Command), Sheet, Dialog, Confirm, Popover, Tooltip, Tabs(Tab), Toast, Theme
 - [x] B3 Veri: TreeGrid, FilterBar(FilterField), Variants, Flow(FlowNode, FlowLink), Trend(Series), Stat
 - [x] B4 Planlama: Board(BoardColumn, BoardCard), Schedule(ScheduleLane, ScheduleTask), Stages(Stage), Activity(ActivityItem)
-- [ ] B5 Giriş: TextField, NumberField, SelectField, MultiSelect, LookupField, DateField, DateRangeField, RadioGroup(RadioItem), Toggle, Check, Segmented, FileDrop(FileItem), Form(FormSection)
+- [x] B5 Giriş: TextField, NumberField, SelectField, MultiSelect, LookupField, DateField, DateRangeField, RadioGroup(RadioItem), Toggle, Check, Segmented, FileDrop(FileItem), Form(FormSection)
 - [ ] B6 Temel: HoldButton, Status, Person, Icon, Message, MessageList(MessageItem), Skeleton, Empty, Text, Stack (Icon sayfasında tüm simge adları listelensin)
 - [ ] B7 Kılavuzlar `content/guides/`: getting-started, no-build (ABAP BSP/zip), theming, odata, models-and-binding, accessibility, localization, limits. Kaynak: README, docs/knowledge/kor.md, src. Doğrulanmamışı "not tested" diye yaz.
 
