@@ -1,0 +1,9 @@
+specVersion: "4.0"
+type: library
+metadata:
+  name: kor.ui
+framework:
+  name: OpenUI5
+  version: "1.108.55"
+  libraries:
+    - name: sap.ui.core

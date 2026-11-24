@@ -1,0 +1,8 @@
+node_modules/
+dist/
+npm/
+site/
+release/
+.env*
+.DS_Store
+*.gen.d.ts

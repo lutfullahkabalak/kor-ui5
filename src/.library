@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd">
+	<name>kor.ui</name>
+	<vendor>Kor</vendor>
+	<version>${version}</version>
+	<copyright></copyright>
+	<title>Kor</title>
+	<documentation>Kor: enterprise components for OpenUI5 and SAPUI5</documentation>
+	<dependencies>
+		<dependency><libraryName>sap.ui.core</libraryName></dependency>
+	</dependencies>
+	<appData>
+		<manifest xmlns="http://www.sap.com/ui5/buildext/manifest">
+			<i18n><bundleUrl>messagebundle.properties</bundleUrl><supportedLocales>,en,tr</supportedLocales><fallbackLocale>en</fallbackLocale></i18n>
+		</manifest>
+	</appData>
+</library>

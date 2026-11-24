@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "types": ["@openui5/ts-types-esm", "qunit"],
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "rootDir": ".",
+    "paths": { "kor/ui/*": ["./src/*"] }
+  },
+  "include": ["types/**/*", "src/**/*", "test/**/*"]
+}
