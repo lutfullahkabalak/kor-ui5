@@ -1,0 +1,11 @@
+{
+	"name": "korui5-site",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"deploy": "cf deploy ./dist"
+	},
+	"devDependencies": {
+		"cf": "^1.0.0-rc.5"
+	}
+}
