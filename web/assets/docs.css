@@ -62,3 +62,4 @@ main { padding: 48px clamp(16px, 4vw, 56px) 100px; min-width: 0; } .wide main { 
 }
 .iconNames { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: .3rem 1rem; padding: 0; list-style: none; }
 @media (max-width: 900px) { .topNav { scrollbar-width: none; mask: linear-gradient(to left, transparent, #000 36px); padding-right: 36px; } }
+.sampleStage:has(.korFlow) { background: var(--kor-night); }
