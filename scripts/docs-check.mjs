@@ -5,9 +5,11 @@ import path from "node:path";
 import puppeteer from "puppeteer-core";
 const dist = path.resolve("web/dist"), filter = process.argv[2]?.startsWith("--") ? "" : process.argv[2] ?? "";
 const shots = process.argv.includes("--shots") ? process.argv[process.argv.indexOf("--shots") + 1] : "";
+const sub = (process.env.DOCS_BASE ?? "").replace(/\/$/, "");
+const local = (u) => (sub && u.startsWith(sub + "/") ? u.slice(sub.length) : u);
 const mime = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".xml": "application/xml", ".properties": "text/plain", ".zip": "application/zip" };
 const server = http.createServer((q, r) => {
-	let f = path.join(dist, decodeURIComponent(new URL(q.url, "http://x").pathname));
+	let f = path.join(dist, local(decodeURIComponent(new URL(q.url, "http://x").pathname)));
 	if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, "index.html");
 	if (!fs.existsSync(f)) return r.writeHead(404).end();
 	r.writeHead(200, { "content-type": (mime[path.extname(f)] ?? "application/octet-stream") + (/html|js|css|json|xml|svg|prop/.test(path.extname(f)) ? "; charset=utf-8" : "") });
@@ -19,7 +21,8 @@ const pages = [...fs.readFileSync(path.join(dist, "sitemap.xml"), "utf8").matchA
 let failed = 0;
 const bad = (u, m) => { failed++; console.log(`HATA ${u}: ${m}`); };
 for (const u of pages) for (const [, href] of fs.readFileSync(path.join(dist, u, "index.html"), "utf8").matchAll(/(?:href|src)="(\/[^"#?]*)/g)) {
-	const f = path.join(dist, href);
+	if (sub && !href.startsWith(sub + "/")) { bad(u, `alt yol eksik ${href}`); continue; }
+	const f = path.join(dist, local(href));
 	if (!fs.existsSync(href.endsWith("/") ? path.join(f, "index.html") : f)) bad(u, `kırık bağlantı ${href}`);
 }
 const queue = pages.filter((u) => /components\/.+|playground|^\/$|^\/tr\/$/.test(u));
@@ -31,7 +34,7 @@ await Promise.all(Array.from({ length: 4 }, async () => {
 		await p.setViewport({ width: 1360, height: 900 });
 		p.on("pageerror", (e) => bad(u, e.message));
 		p.on("console", (m) => { if (m.type() === "error" && !/favicon|unload is not allowed/.test(m.text())) bad(u, m.text().slice(0, 300)); });
-		await p.goto(origin + u);
+		await p.goto(origin + sub + u);
 		const ok = await p.evaluate(async () => {
 			const all = [...document.querySelectorAll(".sample")];
 			for (const s of all) {

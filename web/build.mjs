@@ -27,6 +27,8 @@ const loc = (s, lang) => s.replace(/\[\[([\s\S]*?)\|\|([\s\S]*?)\]\]/g, (_, en, 
 const slug = (n) => n.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
 const base = (lang) => (lang === "en" ? "/" : "/tr/");
 const compUrl = (n, lang) => `${base(lang)}components/${slug(n)}/`;
+// DOCS_BASE: site alt yolda yayınlanıyorsa (github.io/kor-ui5) bağlantılara eklenir
+const sub = (process.env.DOCS_BASE ?? "").replace(/\/$/, "");
 const missingContent = [];
 
 // ---- API: kaynak dosyadaki metadata okunur
@@ -228,6 +230,9 @@ ${c.related ? `<h2>${t.related}</h2><p class="rel">${c.related.filter((x) => com
 	page(lang, "404.html", { title: `${t.notFound} · Kor`, text: t.notFoundText, nav: false, body: `<h1>${t.notFound}</h1><p class="lead">${t.notFoundText}</p><p class="rel"><a href="${b}components/">${t.components}</a></p>` });
 	fs.writeFileSync(path.join(out, `assets/index-${lang}.json`), JSON.stringify(index[lang]));
 }
+if (sub) for (const f of fs.globSync(`${out}/**/*.html`)) fs.writeFileSync(f, fs.readFileSync(f, "utf8")
+	.replace(/(href|src)="\/(?!\/)/g, `$1="${sub}/`)
+	.replaceAll('"/resources/kor/ui/"', `"${sub}/resources/kor/ui/"`));
 fs.writeFileSync(path.join(out, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map((u) => `<url><loc>${ORIGIN}${u}</loc></url>`).join("")}</urlset>`);
 fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
 console.log(`${urls.length} sayfa yazıldı. İçeriği eksik: ${missingContent.length} (${missingContent.join(", ")})`);

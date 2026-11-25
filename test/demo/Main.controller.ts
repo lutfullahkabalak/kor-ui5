@@ -59,9 +59,9 @@ export default class Main extends Controller {
 		location.assign(url);
 	}
 	onDocs(): void {
-		const docs = language === "tr" ? "/tr/" : "/";
-		const integrated = location.pathname === "/demo/" || location.pathname === "/demo/index.html";
-		location.assign(integrated ? docs : `https://korui5.abapnews.com${docs}`);
+		// Demo sitenin /demo/ klasöründeyse (alt yolda da) o sitenin dokümanına döner
+		const site = /^((?!.*test-resources).*\/)demo\/(index\.html)?$/.exec(location.pathname)?.[1] ?? "https://korui5.abapnews.com/";
+		location.assign(`${site}${language === "tr" ? "tr/" : ""}`);
 	}
 	onPalette(): void {
 		(this.byId("palette") as CommandPalette).open();

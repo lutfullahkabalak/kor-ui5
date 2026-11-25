@@ -1,5 +1,7 @@
 (() => {
 	const body = document.body, t = JSON.parse(body.dataset.t), lang = body.dataset.lang, root = document.documentElement;
+	// Sitenin kökü: "/" veya "/kor-ui5/"
+	const base = new URL("..", document.currentScript.src).pathname;
 	const $$ = (s, e = document) => [...e.querySelectorAll(s)];
 	const store = (k, v) => { try { localStorage.setItem(k, v); } catch { /* depolama kapalı */ } };
 
@@ -32,7 +34,7 @@
 		const hits = pages.map((p) => ({ p, s: fold(p.t).startsWith(q) ? 0 : fold(p.t).includes(q) ? 1 : fold(p.d).includes(q) ? 2 : 9 })).filter((x) => x.s < 9).sort((a, b) => a.s - b.s).slice(0, 12);
 		list.replaceChildren(...hits.map(({ p }) => {
 			const a = document.createElement("a"), b = document.createElement("strong"), s = document.createElement("span");
-			a.href = p.u; b.textContent = p.t; s.textContent = p.d; a.append(b, s);
+			a.href = base + p.u.slice(1); b.textContent = p.t; s.textContent = p.d; a.append(b, s);
 			return a;
 		}));
 		if (!hits.length) list.textContent = t.none;
@@ -40,7 +42,7 @@
 	const openFind = async () => {
 		if (find.open) return;
 		find.showModal();
-		pages ??= await (await fetch(`/assets/index-${lang}.json`)).json();
+		pages ??= await (await fetch(`${base}assets/index-${lang}.json`)).json();
 		draw();
 	};
 	document.querySelector("[data-search]").onclick = openFind;
@@ -130,7 +132,7 @@
 		const c = s.querySelector("[data-copy]");
 		c.onclick = () => copy(c, s.querySelector("[data-code]:not([hidden]) code").textContent);
 		const o = s.querySelector("[data-open]");
-		if (o) o.onclick = () => open(`${lang === "tr" ? "/tr" : ""}/playground/#c=${pack({ xml: code(s, "xml"), js: code(s, "js"), data: s.querySelector("[data-model]").textContent })}`);
+		if (o) o.onclick = () => open(`${base}${lang === "tr" ? "tr/" : ""}playground/#c=${pack({ xml: code(s, "xml"), js: code(s, "js"), data: s.querySelector("[data-model]").textContent })}`);
 		// Kod alanında Ctrl/⌘+Enter çalıştırır
 		s.addEventListener("keydown", (e) => e.key === "Enter" && (e.metaKey || e.ctrlKey) && e.target.closest("code") && (e.preventDefault(), run(s)));
 	});
@@ -143,7 +145,7 @@
 	const boot = document.createElement("script");
 	boot.id = "sap-ui-bootstrap";
 	boot.src = body.dataset.live;
-	Object.entries({ "theme": "sap_horizon", "language": lang, "async": "true", "compat-version": "edge", "libs": "kor.ui", "resourceroots": '{"kor.ui": "/resources/kor/ui/"}' }).forEach(([k, v]) => boot.setAttribute("data-sap-ui-" + (k === "compat-version" ? "compatVersion" : k), v));
+	Object.entries({ "theme": "sap_horizon", "language": lang, "async": "true", "compat-version": "edge", "libs": "kor.ui", "resourceroots": JSON.stringify({ "kor.ui": `${base}resources/kor/ui/` }) }).forEach(([k, v]) => boot.setAttribute("data-sap-ui-" + (k === "compat-version" ? "compatVersion" : k), v));
 	boot.onload = () => { sap.ui.getCore().attachInit(window.korBoot); };
 	boot.onerror = () => samples.forEach((s) => { const w = s.querySelector(".sampleWait"); if (w) w.textContent = t.failed; });
 	document.head.append(boot);
