@@ -81,3 +81,6 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - Genel `cf` 0.x klasör yayınlayamaz; `web/` içindeki 1.0 rc kullanılır.
 - Sitedeki kütüphane yereldeki `src` derlemesidir, npm sürümünden ileride olabilir.
 - Arka plandaki sekmede IntersectionObserver çalışmaz; paralel denetimde her işçiye ayrı Chrome açılır.
+- github.io/kor-ui5 aynı sitenin alt yoldaki kopyasıdır (2026-11-25): `DOCS_BASE=/kor-ui5 npm run docs`, `pages.yml` her push'ta yayımlar; canonical korui5.abapnews.com. Denetim: `DOCS_BASE=/kor-ui5 npm run docs:check`. Demo artık `/kor-ui5/demo/`.
+- Örnek uygulamalar ayrı depoda: `../kor-ui5-examples` (github.io/kor-ui5-examples).
+- Kusur: Flow açık zeminde okunmaz (etiketler sabit açık renk); sitede örnek zemini koyulaştırıldı.

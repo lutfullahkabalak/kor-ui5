@@ -1,6 +1,6 @@
 # Kor
 
-[Türkçe](README.tr.md) · [Documentation](https://korui5.abapnews.com/) · [Live demo](https://korui5.abapnews.com/demo/)
+[Türkçe](README.tr.md) · [Documentation](https://korui5.abapnews.com/) · [Live demo](https://korui5.abapnews.com/demo/) · [Examples](https://lutfullahkabalak.github.io/kor-ui5-examples/)
 
 ![Kor flow screen](https://raw.githubusercontent.com/lutfullahkabalak/kor-ui5/main/docs/img/akis-light.jpg)
 
