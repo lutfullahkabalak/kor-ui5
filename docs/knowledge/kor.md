@@ -96,3 +96,10 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - Pivot ve OrgChart tarayıcıdaki veriyle çalışır; büyük OData kümesi denenmedi.
 - Doğrulama: QUnit 89/89 iki sürümde; 46 örnek açık, koyu, 390 px ve RTL (kapsayıcıya `dir`) ekran görüntüsüyle bakıldı. TimeField/DateTimeField gerçek OData ile, ekran okuyucu ve dokunmatik denenmedi.
 - Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site iki adreste de yayında; 0.2.0 hazırlandı; npm ve GitHub yayını bekliyor. Sıra: GitHub yayını (`release/` klasöründen `kor-ui.zip`), npm, push, site. `no-build` kılavuzu v0.2.0 zip adresini gösterir; zip yüklenmeden push edilirse bağlantı kırık kalır.
+
+## Grafikler (2026-11-26)
+`Trend`, `Waterfall`, `Heatmap` yanına `PieChart` (pasta/halka, öğe `PieSlice`) ve `BarChart` (dikey/yatay, yan yana/yığın/yüzde, eksi değer; `Series` kullanır) eklendi; 0.2.0'a dahildir.
+- Seri paleti 6 renk (`--kor-data1..6`, açık ve koyu denetimden geçti); 7. renk üretilmez, pastada fazlası gri "Diğer" olur.
+- Dilim arası boşluk yolun geometrisindedir, çerçeve değil: grafik her zeminde durur. Tek dilim tam daire özel çizilir.
+- SVG `direction: ltr`; RTL aynalama BarChart içinde `px()` ile yapılır. Trend RTL'de aynalanmaz.
+- Denetlendi: QUnit 91/91 iki sürüm, açık, koyu, 390 px, RTL görüntü. Denenmedi: gerçek ekran okuyucu, dokunmatik, Safari/Firefox.
