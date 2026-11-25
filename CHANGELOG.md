@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- App: Accordion, Breadcrumbs, Wizard, Splitter, ColumnLayout, RecordPage, Inbox
+- Data: List, Details, Compare, Pivot, Heatmap, Waterfall
+- Input: TimeField, DateTimeField, TreeField, Slider, Rating, PromptField
+- Planning: MonthCalendar. Base: Link, Card, Progress
+- Cargo: Shipment, DeliveryRoute, LoadPlan, DockBoard
+- Manufacturing: ProductionLine, MachineCard
+- Banking: BankCard, Statement, Installments
+- Education: Timetable, Classroom, CoursePath
+- Human resources: OrgChart, LeaveBalance, ShiftRoster, TalentGrid
+
 ## 0.1.0
 
 First public release. Early version: names and properties may still change.

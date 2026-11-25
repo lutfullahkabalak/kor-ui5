@@ -10,12 +10,17 @@ OpenUI5 ve SAPUI5 (1.108+) için kurumsal bileşen paketi. Fiori görünümüne 
 
 | Alan | Bileşenler |
 | --- | --- |
-| Uygulama | `Shell`, `CommandPalette` (⌘K), `Sheet`, `Dialog`, `Confirm`, `Popover`, `Tooltip`, `Tabs`, `Toast`, `Theme` |
-| Veri | `DataGrid`, `TreeGrid`, `Variants`, `FilterBar`, `Flow`, `Trend`, `Stat` |
-| Planlama | `Board`, `Schedule`, `Stages`, `Activity` |
-| Giriş | `TextField`, `NumberField`, `SelectField`, `LookupField` (F4), `DateField`, `DateRangeField`, `Toggle`, `Check`, `RadioGroup`, `Segmented`, `MultiSelect`, `FileDrop`, `Form` |
+| Uygulama | `Shell`, `CommandPalette` (⌘K), `Sheet`, `Dialog`, `Confirm`, `Popover`, `Tooltip`, `Tabs`, `Accordion`, `Breadcrumbs`, `Wizard`, `Splitter`, `ColumnLayout`, `RecordPage`, `Inbox`, `Toast`, `Theme` |
+| Veri | `DataGrid`, `TreeGrid`, `Variants`, `FilterBar`, `Flow`, `Trend`, `Stat`, `List`, `Details`, `Compare`, `Pivot`, `Heatmap`, `Waterfall` |
+| Planlama | `Board`, `Schedule`, `Stages`, `Activity`, `MonthCalendar` |
+| Giriş | `TextField`, `NumberField`, `SelectField`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `Toggle`, `Check`, `RadioGroup`, `Segmented`, `MultiSelect`, `FileDrop`, `Form` |
 | Eylem | `Button` (menülü), `HoldButton` |
-| Temel | `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack` |
+| Temel | `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress` |
+| Kargo | `Shipment`, `DeliveryRoute`, `LoadPlan`, `DockBoard` |
+| Üretim | `ProductionLine`, `MachineCard` |
+| Bankacılık | `BankCard`, `Statement`, `Installments` |
+| Eğitim | `Timetable`, `Classroom`, `CoursePath` |
+| İnsan kaynakları | `OrgChart`, `LeaveBalance`, `ShiftRoster`, `TalentGrid` |
 
 - **DataGrid**: sanal satır çizimi (demoda 10.000 satır), aralık seçimi ve anlık toplam, yerinde düzenleme, Excel ile kopyala-yapıştır, sabit sütun. `rows` bir UI5 liste bağlamasıdır; şablon istemez.
 - **TreeGrid**: DataGrid'in ağaç hali; UI5 ağaç bağlaması alır (`parameters: {arrayNames: ['children']}`).

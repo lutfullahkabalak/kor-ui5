@@ -8,11 +8,16 @@ Enterprise components for OpenUI5 and SAPUI5 1.108+. Kor does not look like Fior
 
 | Area | Controls |
 | --- | --- |
-| App | `Shell`, `CommandPalette` (⌘K), `Sheet`, `Dialog`, `Confirm`, `Popover`, `Tooltip`, `Tabs`, `Toast`, `Theme` |
-| Data | `DataGrid`, `TreeGrid`, `FilterBar`, `Variants`, `Flow`, `Trend`, `Stat` |
-| Planning | `Board`, `Schedule`, `Stages`, `Activity` |
-| Input | `TextField`, `NumberField`, `SelectField`, `MultiSelect`, `LookupField` (F4), `DateField`, `DateRangeField`, `RadioGroup`, `Toggle`, `Check`, `Segmented`, `FileDrop`, `Form` |
-| Base | `Button`, `HoldButton`, `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack` |
+| App | `Shell`, `CommandPalette` (⌘K), `Sheet`, `Dialog`, `Confirm`, `Popover`, `Tooltip`, `Tabs`, `Accordion`, `Breadcrumbs`, `Wizard`, `Splitter`, `ColumnLayout`, `RecordPage`, `Inbox`, `Toast`, `Theme` |
+| Data | `DataGrid`, `TreeGrid`, `FilterBar`, `Variants`, `Flow`, `Trend`, `Stat`, `List`, `Details`, `Compare`, `Pivot`, `Heatmap`, `Waterfall` |
+| Planning | `Board`, `Schedule`, `Stages`, `Activity`, `MonthCalendar` |
+| Input | `TextField`, `NumberField`, `SelectField`, `MultiSelect`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `RadioGroup`, `Toggle`, `Check`, `Segmented`, `FileDrop`, `Form` |
+| Base | `Button`, `HoldButton`, `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress` |
+| Cargo | `Shipment`, `DeliveryRoute`, `LoadPlan`, `DockBoard` |
+| Manufacturing | `ProductionLine`, `MachineCard` |
+| Banking | `BankCard`, `Statement`, `Installments` |
+| Education | `Timetable`, `Classroom`, `CoursePath` |
+| Human resources | `OrgChart`, `LeaveBalance`, `ShiftRoster`, `TalentGrid` |
 
 ![Orders](https://raw.githubusercontent.com/lutfullahkabalak/kor-ui5/main/docs/img/siparis-light.jpg)
 
