@@ -31,8 +31,8 @@ Gerçek SAP Gateway/RAP servisi, dokunmatik sürükleme, Safari/Firefox, gerçek
 ## UI5'te olup Kor'da olmayanlar (2026-11-24)
 sap.m, sap.ui.layout ve sap.ui.unified 1.108 kayıtlarından; sap.f, sap.ui.table, sap.tnt, sap.uxap bilgiden (kayıt okunmadı).
 1. Yayın için şart grubu tamamlandı: Dialog, Confirm, Popover, Tooltip, Tabs, Form/FormSection, MultiSelect, RadioGroup, FileDrop, Message, MessageList, Skeleton.
-2. Kurumsal: yapıldı → TreeGrid, sütun ayarı, Variants, LookupField. Kalan: tabloda gruplama/toplam, sihirbaz, saat ve tarih-saat, kart listesi (List), master-detail (FlexibleColumnLayout), splitter, nesne sayfası, menü çubuğu, kırıntı yolu.
-3. İhtiyaca göre: ay/hafta takvimi (SinglePlanningCalendar), kaydırıcı, puan, renk seçici, karusel, akordeon, bildirim merkezi, adım/ilerleme çubuğu, karo, PDF, resim, taslak göstergesi, QR/mask alanı.
+2. Yapıldı: TreeGrid, sütun ayarı, Variants, LookupField, sihirbaz, saat ve tarih-saat, List, ColumnLayout, Splitter, RecordPage, Breadcrumbs, MonthCalendar, Slider, Rating, Accordion, Inbox, Progress, Card.
+3. Kalan: DataGrid'de gruplama ve alt toplam, Excel'e aktarma, hafta takvimi, menü çubuğu, çift listeli aktarım, tur, renk seçici, karusel, PDF, QR/barkod.
 
 ## Katman kararları
 - Dialog ve Popover `sap.ui.core.Popup` kullanır ve `dependents`e konur (model kendiliğinden gelir, SAP pencereleriyle katman sırası tutar). Dış öğenin `display`/konum stilini Popup yazar; düzen iç kutuda olmalı, ortalama CSS ile zorlanır.
@@ -84,3 +84,15 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - github.io/kor-ui5 aynı sitenin alt yoldaki kopyasıdır (2026-11-25): `DOCS_BASE=/kor-ui5 npm run docs`, `pages.yml` her push'ta yayımlar; canonical korui5.abapnews.com. Denetim: `DOCS_BASE=/kor-ui5 npm run docs:check`. Demo artık `/kor-ui5/demo/`.
 - Örnek uygulamalar ayrı depoda: `../kor-ui5-examples` (github.io/kor-ui5-examples).
 - Kusur: Flow açık zeminde okunmaz (etiketler sabit açık renk); sitede örnek zemini koyulaştırıldı.
+
+## Sektör aileleri ve eksik bileşenler (2026-11-25, yayımlanmadı)
+39 yeni bileşen eklendi (liste: CHANGELOG Unreleased). Seçimin dayanağı: component.gallery sayıları (Accordion 101, List 67, Breadcrumbs 55, Progress 40, Slider 38, Stepper 20, Rating 19), UI5 Web Components ve Ant Design listeleri (TimePicker, Wizard, NotificationList, PromptInput, Splitter, TreeSelect, Descriptions), AG Grid'in ücretli özellikleri (Pivot). Sahibi ayrıca kargo, üretim, bankacılık, eğitim ve İK ailelerini istedi.
+- `busy` özellik adı kullanılmaz: sap.ui.core.Control'ün kendi `busy`si vardır ve yeniden çizmez. Yerine `working`.
+- Araç çizimleri `src/vehicles.ts` (unsafeHtml; yalnız sabit metin). Süreç ve ürün simgeleri `src/processes.ts`; yeni süreç eklenince simge `scripts/icons.mjs` listesine de girmeli (Sector testi denetler).
+- İç içe konabilen bileşenlerde tıklama `data-of=<id>` ile kendi kökünden ayrılır.
+- Shipment yeri duraklardan bulur: `info` yolda, `wait`/`danger` o durakta durur; `progress` verilirse o geçerli. Bacağın aracı, çıkılan durağın `mode` değeridir.
+- BankCard yalnız son dört haneyi DOM'a yazar. Link ve Breadcrumbs `safeHref` ile javascript:/data: adreslerini eler.
+- DockBoard ve ShiftRoster veriyi değiştirmez, olay verir; Classroom ve TalentGrid öğenin kendi özelliğini değiştirir.
+- Pivot ve OrgChart tarayıcıdaki veriyle çalışır; büyük OData kümesi denenmedi.
+- Doğrulama: QUnit 89/89 iki sürümde; 46 örnek açık, koyu, 390 px ve RTL (kapsayıcıya `dir`) ekran görüntüsüyle bakıldı. TimeField/DateTimeField gerçek OData ile, ekran okuyucu ve dokunmatik denenmedi.
+- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site ve npm yayını yapılmadı.
