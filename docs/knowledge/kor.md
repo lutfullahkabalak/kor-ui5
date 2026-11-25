@@ -95,7 +95,7 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - DockBoard ve ShiftRoster veriyi değiştirmez, olay verir; Classroom ve TalentGrid öğenin kendi özelliğini değiştirir.
 - Pivot ve OrgChart tarayıcıdaki veriyle çalışır; büyük OData kümesi denenmedi.
 - Doğrulama: QUnit 89/89 iki sürümde; 46 örnek açık, koyu, 390 px ve RTL (kapsayıcıya `dir`) ekran görüntüsüyle bakıldı. TimeField/DateTimeField gerçek OData ile, ekran okuyucu ve dokunmatik denenmedi.
-- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site iki adreste de yayında; 0.2.0 hazırlandı; npm ve GitHub yayını bekliyor. Sıra: GitHub yayını (`release/` klasöründen `kor-ui.zip`), npm, push, site. `no-build` kılavuzu v0.2.0 zip adresini gösterir; zip yüklenmeden push edilirse bağlantı kırık kalır.
+- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. 0.2.0 GitHub sürümü ve site iki adreste yayında (2026-11-26, grafikler dahil); npm bekliyor: `npm run build`, sonra sahibi `cd npm && npm publish --access public`. Örnekler deposu npm sonrası 0.2.0'a yükseltilir.
 
 ## Grafikler (2026-11-26)
 `Trend`, `Waterfall`, `Heatmap` yanına `PieChart` (pasta/halka, öğe `PieSlice`) ve `BarChart` (dikey/yatay, yan yana/yığın/yüzde, eksi değer; `Series` kullanır) eklendi; 0.2.0'a dahildir.
@@ -103,3 +103,4 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - Dilim arası boşluk yolun geometrisindedir, çerçeve değil: grafik her zeminde durur. Tek dilim tam daire özel çizilir.
 - SVG `direction: ltr`; RTL aynalama BarChart içinde `px()` ile yapılır. Trend RTL'de aynalanmaz.
 - Denetlendi: QUnit 91/91 iki sürüm, açık, koyu, 390 px, RTL görüntü. Denenmedi: gerçek ekran okuyucu, dokunmatik, Safari/Firefox.
+- Pages iş akışı iki işlidir (build, deploy): tek işte deploy-pages yeni yüklenen artifact'i bulamadı (2026-11-26).
