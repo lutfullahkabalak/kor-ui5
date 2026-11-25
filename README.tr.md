@@ -85,7 +85,7 @@ Derleme zinciri kullanmıyorsanız sürüm sayfasındaki `kor-ui.zip` içindeki 
 
 ## Durum
 
-0.1.0, erken sürüm. Bilinen sınırlar:
+0.2.0, erken sürüm. Bilinen sınırlar:
 
 - Testler 1.108.55 ve 1.154.0 ile Chrome'da koşar; aradaki sürümler, Safari ve Firefox denenmedi.
 - OData V2 ve V4, sahte sunucuyla denendi (sayfalama, sıralama, süzme, seçim, F4, V4 PATCH). Gerçek bir SAP Gateway/RAP servisinde denenmedi.

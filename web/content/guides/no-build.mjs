@@ -4,7 +4,7 @@ export default {
 	body: {
 		en: `## Copy the library files
 
-1. Download [kor-ui.zip](https://github.com/lutfullahkabalak/kor-ui5/releases/download/v0.1.0/kor-ui.zip) and unpack it.
+1. Download [kor-ui.zip](https://github.com/lutfullahkabalak/kor-ui5/releases/download/v0.2.0/kor-ui.zip) and unpack it.
 2. Copy the full \`kor/ui\` directory to the application server. Keep the JS modules, message bundles, stylesheet and assets together.
 3. Map the UI5 resource root \`kor.ui\` to that directory. Keep your application's existing resource roots and library dependencies.
 
@@ -25,7 +25,7 @@ Adjust the bootstrap URL to match the UI5 runtime on your server. If you use a m
 For a BSP application the same relative layout is a starting point. Upload the extracted files as static resources, use the existing SAPUI5 runtime and match the resource-root URL to the deployed directory. Check that JS, CSS, fonts and message bundles return HTTP 200 after deployment. ABAP BSP and Launchpad deployment: **not tested**.`,
 		tr: `## Kütüphane dosyalarını kopyala
 
-1. [kor-ui.zip](https://github.com/lutfullahkabalak/kor-ui5/releases/download/v0.1.0/kor-ui.zip) dosyasını indir ve aç.
+1. [kor-ui.zip](https://github.com/lutfullahkabalak/kor-ui5/releases/download/v0.2.0/kor-ui.zip) dosyasını indir ve aç.
 2. \`kor/ui\` dizininin tamamını uygulama sunucusuna kopyala. JS modülleri, mesaj dosyaları, stil dosyası ve varlıklar birlikte kalsın.
 3. UI5’te \`kor.ui\` kaynak kökünü bu dizine yönlendir. Uygulamanın mevcut kaynak köklerini ve kütüphane bağımlılıklarını koru.
 

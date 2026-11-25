@@ -95,4 +95,4 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - DockBoard ve ShiftRoster veriyi değiştirmez, olay verir; Classroom ve TalentGrid öğenin kendi özelliğini değiştirir.
 - Pivot ve OrgChart tarayıcıdaki veriyle çalışır; büyük OData kümesi denenmedi.
 - Doğrulama: QUnit 89/89 iki sürümde; 46 örnek açık, koyu, 390 px ve RTL (kapsayıcıya `dir`) ekran görüntüsüyle bakıldı. TimeField/DateTimeField gerçek OData ile, ekran okuyucu ve dokunmatik denenmedi.
-- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site iki adreste de yayında; npm hâlâ 0.1.0, yeni bileşenler pakette yok.
+- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site iki adreste de yayında; 0.2.0 hazırlandı; npm ve GitHub yayını bekliyor. Sıra: GitHub yayını (`release/` klasöründen `kor-ui.zip`), npm, push, site. `no-build` kılavuzu v0.2.0 zip adresini gösterir; zip yüklenmeden push edilirse bağlantı kırık kalır.

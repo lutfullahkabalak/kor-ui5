@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0
 
 - App: Accordion, Breadcrumbs, Wizard, Splitter, ColumnLayout, RecordPage, Inbox
 - Data: List, Details, Compare, Pivot, Heatmap, Waterfall
@@ -11,6 +11,7 @@
 - Banking: BankCard, Statement, Installments
 - Education: Timetable, Classroom, CoursePath
 - Human resources: OrgChart, LeaveBalance, ShiftRoster, TalentGrid
+- No breaking changes
 
 ## 0.1.0
 

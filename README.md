@@ -67,7 +67,7 @@ No build chain? Put the `kor/ui` folder from `kor-ui.zip` (releases page) on you
 
 ## Status
 
-0.1.0, an early release: names may still change. Known limits:
+0.2.0, an early release: names may still change. Known limits:
 
 - Tested on 1.108.55 and 1.154.0 in Chrome. Other versions, Safari and Firefox are untested.
 - OData was tested against mock servers, not a real SAP Gateway or RAP service.
