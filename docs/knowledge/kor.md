@@ -85,7 +85,7 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - Örnek uygulamalar ayrı depoda: `../kor-ui5-examples` (github.io/kor-ui5-examples).
 - Kusur: Flow açık zeminde okunmaz (etiketler sabit açık renk); sitede örnek zemini koyulaştırıldı.
 
-## Sektör aileleri ve eksik bileşenler (2026-11-25, yayımlanmadı)
+## Sektör aileleri ve eksik bileşenler (2026-11-25)
 39 yeni bileşen eklendi (liste: CHANGELOG Unreleased). Seçimin dayanağı: component.gallery sayıları (Accordion 101, List 67, Breadcrumbs 55, Progress 40, Slider 38, Stepper 20, Rating 19), UI5 Web Components ve Ant Design listeleri (TimePicker, Wizard, NotificationList, PromptInput, Splitter, TreeSelect, Descriptions), AG Grid'in ücretli özellikleri (Pivot). Sahibi ayrıca kargo, üretim, bankacılık, eğitim ve İK ailelerini istedi.
 - `busy` özellik adı kullanılmaz: sap.ui.core.Control'ün kendi `busy`si vardır ve yeniden çizmez. Yerine `working`.
 - Araç çizimleri `src/vehicles.ts` (unsafeHtml; yalnız sabit metin). Süreç ve ürün simgeleri `src/processes.ts`; yeni süreç eklenince simge `scripts/icons.mjs` listesine de girmeli (Sector testi denetler).
@@ -95,4 +95,4 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - DockBoard ve ShiftRoster veriyi değiştirmez, olay verir; Classroom ve TalentGrid öğenin kendi özelliğini değiştirir.
 - Pivot ve OrgChart tarayıcıdaki veriyle çalışır; büyük OData kümesi denenmedi.
 - Doğrulama: QUnit 89/89 iki sürümde; 46 örnek açık, koyu, 390 px ve RTL (kapsayıcıya `dir`) ekran görüntüsüyle bakıldı. TimeField/DateTimeField gerçek OData ile, ekran okuyucu ve dokunmatik denenmedi.
-- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site ve npm yayını yapılmadı.
+- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. Site iki adreste de yayında; npm hâlâ 0.1.0, yeni bileşenler pakette yok.
