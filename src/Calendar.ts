@@ -31,7 +31,10 @@ const today = (): Date => {
 // 1.108 tiplerinde getInstance yok
 const localeData = (): { getFirstDayOfWeek(): number; getDatePattern(style: string): string } =>
 	(LocaleData as unknown as { getInstance(locale: unknown): never }).getInstance(Core.getConfiguration().getFormatSettings().getFormatLocale());
-const weekStart = (): number => localeData().getFirstDayOfWeek();
+export const weekStart = (): number => localeData().getFirstDayOfWeek();
+
+/** Hafta başından sıralı kısa gün adları */
+export const dayNames = (): string[] => Array.from({ length: 7 }, (_, i) => dateText(new Date(2024, 0, 7 + weekStart() + i), "EEE"));
 
 export function showDate(value: unknown): string {
 	const date = toDate(value);

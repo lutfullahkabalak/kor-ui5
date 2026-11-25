@@ -7,5 +7,5 @@ export default {
 		sinon: false,
 		module: "./{name}.qunit"
 	},
-	tests: { Kor: { title: "Kor" }, OData: { title: "OData" } }
+	tests: { Kor: { title: "Kor" }, Sector: { title: "Kor sektör bileşenleri" }, OData: { title: "OData" } }
 };

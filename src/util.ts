@@ -127,6 +127,24 @@ export function statusHtml(text: string, state: string): string {
 	const key = stateKey(state);
 	return `<span class="korStatus korState-${key}"><span class="korStatusGlyph">${iconHtml(stateIcons[key])}</span><span class="korStatusText">${esc(text)}</span></span>`;
 }
+export function renderStatus(rm: RenderManager, text: string, state: string): void {
+	const key = stateKey(state);
+	rm.openStart("span").class("korStatus").class(`korState-${key}`).openEnd().openStart("span").class("korStatusGlyph").openEnd();
+	renderIcon(rm, stateIcons[key]);
+	rm.close("span").openStart("span").class("korStatusText").openEnd().text(text || message(`STATE_${key.toUpperCase()}`)).close("span").close("span");
+}
+export function renderFace(rm: RenderManager, name: string): void {
+	rm.openStart("span").class("korFace").class(`korTone${tone(name)}`).attr("aria-hidden", "true").openEnd().text(initials(name)).close("span");
+}
+/** Çalıştırılabilir adresleri (javascript:, data:) eler */
+export function safeHref(href: string): string {
+	if (!href) return "";
+	try {
+		return /^(https?|mailto|tel):$/.test(new URL(href, document.baseURI).protocol) ? href : "";
+	} catch {
+		return "";
+	}
+}
 export function faceHtml(name: string): string {
 	return `<span class="korFace korTone${tone(name)}" aria-hidden="true">${esc(initials(name))}</span>`;
 }

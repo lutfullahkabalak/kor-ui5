@@ -3,7 +3,7 @@
 import { spawn } from "node:child_process";
 import puppeteer from "puppeteer-core";
 
-const tests = ["Kor", "OData"];
+const tests = ["Kor", "Sector", "OData"];
 const browser = await puppeteer.launch({
 	...(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : { channel: "chrome" }),
 	// CI kapsayıcısında Chrome korumalı alanı açılamaz
