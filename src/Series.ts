@@ -2,7 +2,7 @@ import Element from "sap/ui/core/Element";
 import "./library";
 
 /**
- * Trend grafiğindeki seri
+ * Trend veya BarChart serisi
  *
  * @namespace kor.ui
  */
@@ -21,7 +21,7 @@ export default class Series extends Element {
 			name: { type: "string", defaultValue: "" },
 			/** Sayı dizisi */
 			values: { type: "object" },
-			/** area, line, bar veya ghost */
+			/** Trend için: area, line, bar veya ghost */
 			kind: { type: "string", defaultValue: "line" }
 		}
 	};

@@ -9,7 +9,7 @@ Enterprise components for OpenUI5 and SAPUI5 1.108+. Kor does not look like Fior
 | Area | Controls |
 | --- | --- |
 | App | `Shell`, `CommandPalette` (⌘K), `Sheet`, `Dialog`, `Confirm`, `Popover`, `Tooltip`, `Tabs`, `Accordion`, `Breadcrumbs`, `Wizard`, `Splitter`, `ColumnLayout`, `RecordPage`, `Inbox`, `Toast`, `Theme` |
-| Data | `DataGrid`, `TreeGrid`, `FilterBar`, `Variants`, `Flow`, `Trend`, `Stat`, `List`, `Details`, `Compare`, `Pivot`, `Heatmap`, `Waterfall` |
+| Data | `DataGrid`, `TreeGrid`, `FilterBar`, `Variants`, `Flow`, `Trend`, `BarChart`, `PieChart`, `Stat`, `List`, `Details`, `Compare`, `Pivot`, `Heatmap`, `Waterfall` |
 | Planning | `Board`, `Schedule`, `Stages`, `Activity`, `MonthCalendar` |
 | Input | `TextField`, `NumberField`, `SelectField`, `MultiSelect`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `RadioGroup`, `Toggle`, `Check`, `Segmented`, `FileDrop`, `Form` |
 | Base | `Button`, `HoldButton`, `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress` |

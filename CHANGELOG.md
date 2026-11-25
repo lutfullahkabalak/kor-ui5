@@ -3,7 +3,7 @@
 ## 0.2.0
 
 - App: Accordion, Breadcrumbs, Wizard, Splitter, ColumnLayout, RecordPage, Inbox
-- Data: List, Details, Compare, Pivot, Heatmap, Waterfall
+- Data: List, Details, Compare, Pivot, Heatmap, Waterfall, BarChart, PieChart
 - Input: TimeField, DateTimeField, TreeField, Slider, Rating, PromptField
 - Planning: MonthCalendar. Base: Link, Card, Progress
 - Cargo: Shipment, DeliveryRoute, LoadPlan, DockBoard

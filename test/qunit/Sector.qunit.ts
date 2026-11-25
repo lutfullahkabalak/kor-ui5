@@ -1,6 +1,7 @@
 import Accordion from "kor/ui/Accordion";
 import AccordionItem from "kor/ui/AccordionItem";
 import BankCard from "kor/ui/BankCard";
+import BarChart from "kor/ui/BarChart";
 import Breadcrumbs from "kor/ui/Breadcrumbs";
 import CalendarEvent from "kor/ui/CalendarEvent";
 import Card from "kor/ui/Card";
@@ -40,6 +41,8 @@ import MachineSpan from "kor/ui/MachineSpan";
 import MonthCalendar from "kor/ui/MonthCalendar";
 import OrgChart from "kor/ui/OrgChart";
 import OrgPerson from "kor/ui/OrgPerson";
+import PieChart from "kor/ui/PieChart";
+import PieSlice from "kor/ui/PieSlice";
 import Pivot from "kor/ui/Pivot";
 import ProductionLine from "kor/ui/ProductionLine";
 import ProductionStation from "kor/ui/ProductionStation";
@@ -49,6 +52,7 @@ import Rating from "kor/ui/Rating";
 import RecordPage from "kor/ui/RecordPage";
 import RecordSection from "kor/ui/RecordSection";
 import ShiftEntry from "kor/ui/ShiftEntry";
+import Series from "kor/ui/Series";
 import ShiftRoster from "kor/ui/ShiftRoster";
 import ShiftType from "kor/ui/ShiftType";
 import Shipment from "kor/ui/Shipment";
@@ -473,6 +477,47 @@ QUnit.test("Heatmap, Waterfall", (assert) => {
 	const fall = new Waterfall({ steps: [new WaterfallStep({ label: "Baş", value: 100, kind: "total" }), new WaterfallStep({ label: "Gider", value: -130 }), new WaterfallStep({ label: "Gelir", value: "50" as never }), new WaterfallStep({ label: "Son", kind: "total" })] });
 	show(fall);
 	assert.deepEqual(fall.getRanges().map((r) => r.to), [100, -30, 20, 20]);
+});
+
+QUnit.test("PieChart: pay, Diğer, eksi değer, tıklama", (assert) => {
+	let hit: Record<string, unknown> = {};
+	const values: unknown[] = ["40.0", 30, 10, 8, 6, 4, 2, -5];
+	const pie = new PieChart({ kind: "donut", maxSlices: 4, slices: values.map((value, i) => new PieSlice({ key: `k${i}`, label: `L${i}`, value } as never)), slicePress: (e: unknown) => (hit = params(e)) } as never);
+	const dom = show(pie);
+	assert.deepEqual(pie.getParts().map((p) => p.value), [40, 30, 10, 20]);
+	assert.strictEqual(pie.getParts().reduce((s, p) => s + p.share, 0), 1);
+	assert.strictEqual(all(dom, ".korSlice").length, 4);
+	all(dom, ".korPieRow")[3].click();
+	assert.strictEqual(hit.key, "");
+	assert.deepEqual(hit.keys, ["k3", "k4", "k5", "k6", "k7"]);
+	const one1 = show(new PieChart({ slices: [new PieSlice({ label: "Tek", value: 5 }), new PieSlice({ label: "Sıfır", value: 0 })] }));
+	assert.strictEqual(all(one1, ".korSlice").length, 1);
+	assert.strictEqual(all(one1, ".korPieRow").length, 2);
+	assert.strictEqual(all(show(new PieChart()), ".korMenuNone").length, 1);
+});
+
+QUnit.test("BarChart: yan yana, yığın, yüzde, eksi, klavye, tıklama", (assert) => {
+	const done = assert.async();
+	let hit: Record<string, unknown> = {};
+	const chart = new BarChart({ labels: ["A", "B"], stack: "stacked", series: [new Series({ name: "S1", values: ["10.5", -4] }), new Series({ name: "S2", values: [5, -6] }), new Series({ name: "S3", values: [null, 3] })], barPress: (e: unknown) => (hit = params(e)) } as never);
+	const dom = show(chart);
+	assert.deepEqual(chart.getBars(0).map((b) => [b.from, b.to]), [[0, 10.5], [10.5, 15.5]]);
+	assert.deepEqual(chart.getBars(1).map((b) => [b.from, b.to]), [[0, -4], [-4, -10], [0, 3]]);
+	assert.deepEqual(chart.getBars(1).map((b) => b.end), [false, true, true]);
+	setTimeout(() => {
+		assert.strictEqual(all(dom, ".korCol").length, 5);
+		dom.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+		assert.ok(one(dom, ".korTip").textContent?.includes("S1"));
+		dom.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+		assert.strictEqual(hit.label, "A");
+		chart.setStack("full");
+		assert.strictEqual(chart.getBars(1).reduce((s, b) => s + Math.abs(b.to - b.from), 0), 100);
+		const full = show(new BarChart({ labels: ["A"], stack: "full", series: [new Series({ values: [1] }), new Series({ values: [3] })] } as never));
+		setTimeout(() => {
+			assert.notOk([...full.querySelectorAll(".korAxis")].some((t) => /[-−]/.test(t.textContent ?? "")), "artılarda eksi eksen yok");
+			done();
+		}, 200);
+	}, 200);
 });
 
 QUnit.test("Pivot: toplam, metin ondalık, açma, sıralama, hücre süzgeci", (assert) => {

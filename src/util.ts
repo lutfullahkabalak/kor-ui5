@@ -23,6 +23,11 @@ export function num(value: number, decimals = 0): string {
 export function pct(value: number, decimals = 0): string {
 	return NumberFormat.getPercentInstance({ decimals, groupingEnabled: true }).format(value / 100);
 }
+/** Sayı ya da OData metin ondalığı; okunamayan 0 sayılır */
+export function amount(value: unknown): number {
+	const n = Number(value ?? 0);
+	return Number.isFinite(n) ? n : 0;
+}
 export function parseNum(text: string): number {
 	return NumberFormat.getFloatInstance().parse(text.replace(/%/g, "").trim()) as number;
 }
