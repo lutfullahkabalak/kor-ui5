@@ -13,12 +13,14 @@ OpenUI5 ve SAPUI5 (1.108+) için kurumsal bileşen paketi. Fiori görünümüne 
 | Uygulama | `Shell`, `CommandPalette` (⌘K), `Sheet`, `Dialog`, `Confirm`, `Popover`, `Tooltip`, `Tabs`, `Accordion`, `Breadcrumbs`, `Wizard`, `Splitter`, `ColumnLayout`, `RecordPage`, `Inbox`, `Toast`, `Theme` |
 | Veri | `DataGrid`, `TreeGrid`, `Variants`, `FilterBar`, `Flow`, `Trend`, `BarChart`, `PieChart`, `Stat`, `List`, `Details`, `Compare`, `Pivot`, `Heatmap`, `Waterfall` |
 | Planlama | `Board`, `Schedule`, `Stages`, `Activity`, `MonthCalendar` |
-| Giriş | `TextField`, `NumberField`, `SelectField`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `Toggle`, `Check`, `RadioGroup`, `Segmented`, `MultiSelect`, `FileDrop`, `Form` |
+| Giriş | `TextField`, `NumberField`, `SelectField`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `Toggle`, `Check`, `RadioGroup`, `Segmented`, `MultiSelect`, `FileDrop`, `SignaturePad`, `Form` |
 | Eylem | `Button` (menülü), `HoldButton` |
 | Temel | `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress`, `Flag` |
 | Kargo | `Shipment`, `DeliveryRoute`, `LoadPlan`, `DockBoard` |
 | Üretim | `ProductionLine`, `MachineCard` |
 | Bankacılık | `BankCard`, `BankLogo`, `Statement`, `Installments` |
+| Mutabakat | `MatchGrid`, `ReconcileLetter`, `ReconMatrix` |
+| Kiralama | `LeaseTimeline`, `EscalationField`, `DamageMap` |
 | Eğitim | `Timetable`, `Classroom`, `CoursePath` |
 | İnsan kaynakları | `OrgChart`, `LeaveBalance`, `ShiftRoster`, `TalentGrid` |
 
