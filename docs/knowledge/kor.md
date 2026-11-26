@@ -129,7 +129,7 @@ Sahibi "kiralama modülleri ve e-mutabakat için ne eklenebilir" diye sordu, ön
 - Ders: otomasyonla yapılan tıklama `mouseover/mouseout` üretmez; üzerine gelme vurgusu yalnız DOM'da tutulursa yeniden çizimde kalıyordu. Vurgu durumu (`lit`) çizime taşındı.
 - Ders: MatchGrid seçim çubuğu yapışkandır, ilk seçimden sonra alttaki satırları örtebilir; tarayıcı denetiminde koordinatla değil öğeyle tıkla.
 - Doğrulama: QUnit Finance 9/9, toplam 103 test 1.108.55 ve 1.154.0'da geçti; site 210 sayfa, 0 hata. Tarayıcıda açık/koyu, 390 px ve Türkçe bakıldı. RTL, dokunmatik imza, ekran okuyucu ve gerçek OData denenmedi.
-- Yayın: yayınlanmadı (sürüm hâlâ 0.2.0). Örnek deposu yayımlanmış paketi kullandığı için oradaki `e-reconciliation` ve `lease-contracts` uygulamaları sonraki sürümden sonra eklenebilir.
+- Yayın: 0.3.0'a dahil (aşağıya bak). Örnek deposundaki `e-reconciliation` ve `lease-contracts` uygulamaları henüz eklenmedi.
 
 ## Bayrak ve banka logosu (2026-11-26)
 Sahibin isteği: dünyadaki tüm bayrak ve banka logolarını kapsayan özellik. `Flag` ve `BankLogo` eklendi; ayrı dalda (`bayrak-ve-banka-logolari`, worktree) yazıldı: ana depoda başka oturumun commit'lenmemiş işi vardı. O iş commit'lenince main'e birleştirildi; birleşik hâlde QUnit 105/105 iki sürümde, `docs:check /components/` 192 sayfa 0 hata.
@@ -148,3 +148,10 @@ Sahibin isteği: `openui5-custom/icons` altındaki renkli ikon paketi (SAP-icons
 - Kor uyumu paketin `renkli.css` dosyasında: `korIconFont` değiştirme kipine girer, Kor koyu görünümünde koyu palet, `korBtn-accent`'te renkli zemin, `korBtn-primary`'de zemine uyan palet. Ders: `rm.style()` font ailesini tırnaksız yazar (`font-family: SAP-icons;`), `iconHtml` tırnaklı; seçici ikisini de kapsamalı.
 - Doğrulandı: site 216 sayfa 0 hata (`docs:check`), `DOCS_BASE=/kor-ui5` ile rehberler 18 sayfa 0 hata. Tarayıcıda: iki örnek çalışıyor, değiştirme kipi Kor düğmelerini ve `core:Icon`'u renklendiriyor, galeri süzme ve koyu görünüm. Türkçe sayfa üretiliyor. Denenmedi: 390 px, Safari/Firefox, RTL.
 - Açık: paketin lisansı ve kalıcı adı kararlaştırılmadı; sitede lisans iddiası yok, yalnız çizimlerin özgün olduğu yazıyor.
+
+## 0.3.0 yayını (2026-11-26)
+- İçerik: DataGrid SAP GUI deneyimi, mutabakat, kiralama, SignaturePad, Flag, BankLogo (CHANGELOG 0.3.0). Kırıcı değişiklik yok, bu yüzden küçük sürüm.
+- Adımlar: `npm version X --no-git-tag-version`; CHANGELOG "Unreleased" → sürüm; README/README.tr'deki "X, erken sürüm" ve `web/content/guides/no-build.mjs` zip bağlantısı; `npm run release:check`; TS tüketici denemesi; commit + `vX` etiketi + push; `release/` içinden `zip -qrX kor-ui.zip LICENSE NOTICE kor` ile `gh release create`; `npm run docs && npm run docs:check`, `cd web && npx cf deploy ./dist`; npm yayınını sahibi yapar (`cd npm && npm publish --access public`, iki adımlı doğrulama).
+- TS tüketici denemesi: boş projede `npm i <pack>.tgz typescript @openui5/types`, tsconfig'de `target es2022`, `skipLibCheck true`, `types: ["@openui5/types", "kor-ui5"]`. Bu ayarlar olmadan hatalar UI5 tiplerinden gelir, Kor'dan değil.
+- Doğrulandı: QUnit 105/105 (1.108.55 ve 1.154.0), paket 1,6 MB / 1025 dosya (bayraklar yüzünden 0.2.0'dan büyük), TS denemesi temiz, site 216 sayfa 0 hata. Zip 6 MB, 880 dosya.
+- README ana sayfa sayısı artık `home.mjs` içinde menüden sayılır ("kırk bileşen" eskimişti).
