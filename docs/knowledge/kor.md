@@ -13,7 +13,7 @@ Amaç: SAP görünümünden bağımsız, kurumsal işe uygun, herkese açık UI5
 `npm run build`: `npm/` (derlenmiş JS + tip) ve `site/` (GitHub Pages demosu, OpenUI5 CDN'den). Doğrulandı: boş bir UI5 1.120.30 uygulamasında `npm install` + manifest `libs` ile çalıştı, `ui5 build --all` başarılı; `site/` yerel sunucuda çalıştı.
 
 ## Doğrulanan
-QUnit 55/55 (38 genel, 17 OData) ve tarayıcı etkileşim turu (aralık, düzenleme, sıralama, süzgeç, panel, palet, pano, plan, akış, basılı tut) 1.108.55 ve 1.154.0. Koyu, 390 px ve RTL ekran görüntüsüyle bakıldı.
+QUnit 94/94 (42 genel, 35 sektör, 17 OData) ve tarayıcı etkileşim turu (aralık, düzenleme, sıralama, süzgeç, panel, palet, pano, plan, akış, basılı tut) 1.108.55 ve 1.154.0. Koyu, 390 px ve RTL ekran görüntüsüyle bakıldı.
 
 ## Eksikler
 Gerçek SAP Gateway/RAP servisi, dokunmatik sürükleme, Safari/Firefox, gerçek ekran okuyucu, ABAP/Launchpad dağıtımı denenmedi. Bileşen eksikleri aşağıda.
@@ -104,3 +104,15 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - SVG `direction: ltr`; RTL aynalama BarChart içinde `px()` ile yapılır. Trend RTL'de aynalanmaz.
 - Denetlendi: QUnit 91/91 iki sürüm, açık, koyu, 390 px, RTL görüntü. Denenmedi: gerçek ekran okuyucu, dokunmatik, Safari/Firefox.
 - Pages iş akışı iki işlidir (build, deploy): tek işte deploy-pages yeni yüklenen artifact'i bulamadı (2026-11-26).
+
+## DataGrid: SAP GUI tablo deneyimi (2026-11-26)
+Sahibin isteği: sütunlar sürükle-bırakla yer değiştirsin, SAP GUI (ALV) deneyimi ve kısayolları olsun, mevcut davranış kötüleşmesin.
+- Başlık sürüklenir (5 px eşik, dokunmatikte kapalı): hayalet başlık, tablo boyu turuncu bırakma çizgisi, kenarda yatay kaydırma, Escape iptal. Sabit (pinned) sütun taşınmaz, önüne bırakılamaz. Sürüklemeden sonraki tıklama sıralama yapmaz.
+- Ctrl/⌘+←/→ etkin sütunu taşır (UI5 tablo ve Kor Board ile aynı). Önceden bu tuşlar düz ok gibiydi.
+- Sütun menüsü: başlığa sağ tık, Shift+F10 veya Menü tuşu. Artan/azalan sırala, sıralamayı kaldır, en uygun genişlik, sola/sağa taşı, gizle, Sütunlar paneli.
+- Ayraçta çift tık: en uygun genişlik (64–640 px), başlık ve çizili satırlara göre; hücre kopyası `width:max-content` ile ölçülür. scrollWidth yanıltır: flex düğmede metin satır kaydırır.
+- Ctrl+F arama çubuğu tablonun içinde açılır (tarayıcı aramasının yerine, yalnızca tablo odaktayken); Enter/Shift+Enter, Ctrl+G/Ctrl+Shift+G, F3. Arama görünen sütunların biçimli metninde, `fold` ile Türkçe harf duyarsız. Sunucu bağlamasında gelmemiş satırlar atlanır, sayaç "yüklenen satırlarda" der.
+- SAP GUI'nin sıralama kısayolları (Ctrl+F4 artan, Ctrl+Shift+F4 azalan, Ctrl+F5 süzgeç) bilerek alınmadı: tarayıcıda Ctrl+F4 sekmeyi kapatır, Ctrl+F5 sayfayı yeniler; sayfa bunları engelleyemez. Sıralama menüden yapılır.
+- Ekran okuyucu için `<id>-say` canlı alanı taşıma sonucunu söyler; tablo `aria-keyshortcuts` taşır.
+- Mac'te Ctrl+ok Mission Control'e gider; ⌘ ile çalışır, menü ipucu ⌘ gösterir. Gerçek Mac kısayol çakışması ve Windows Menü tuşu elle denenmedi.
+- RTL'de sürükleme ve menü yönü kodda ele alındı ama tarayıcıda denenmedi.
