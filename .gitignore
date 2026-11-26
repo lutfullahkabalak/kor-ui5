@@ -12,3 +12,4 @@ web/examples/*/node_modules/
 web/examples/*/dist/
 .cloudflare/
 .wrangler/
+src/assets/flags/

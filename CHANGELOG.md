@@ -9,6 +9,8 @@
 - Leasing: LeaseTimeline (increases, options, notice deadlines), EscalationField (rent increase rule with preview), DamageMap (vehicle handover and return)
 - Input: SignaturePad
 - Installments: `showBalance` and `Installment.remeasured`; Schedule: `slotPress` for clicks on an empty day
+- Flag: every ISO 3166-1 country flag (249), plus UK nations, regions and organizations, in rect, square or circle
+- BankLogo: bank logo from your registry or logo server, or a mark and country flag for any BIC in the world. Kor ships no bank logos
 - No breaking changes
 
 ## 0.2.0

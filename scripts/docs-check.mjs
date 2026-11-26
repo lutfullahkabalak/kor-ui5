@@ -42,7 +42,7 @@ await Promise.all(Array.from({ length: 4 }, async () => {
 				for (let i = 0; i < 100 && !s.dataset.sampleState; i++) await new Promise((r) => setTimeout(r, 100));
 			}
 			await new Promise((r) => setTimeout(r, 500));
-			return all.map((s) => [s.id, s.dataset.sampleState, s.querySelector("[data-stage]").innerText.trim().length + s.querySelectorAll("[data-stage] svg, [data-stage] input, [data-stage] button").length]);
+			return all.map((s) => [s.id, s.dataset.sampleState, s.querySelector("[data-stage]").innerText.trim().length + s.querySelectorAll("[data-stage] svg, [data-stage] img, [data-stage] input, [data-stage] button").length]);
 		});
 		for (const [id, state, size] of ok) if (state !== "ok" || !size) bad(u, `örnek ${id}: ${state ?? "yüklenmedi"}${size ? "" : ", boş"}`);
 		const w = await p.evaluate(() => document.documentElement.scrollWidth - innerWidth);

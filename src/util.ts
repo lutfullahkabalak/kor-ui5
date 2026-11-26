@@ -5,6 +5,7 @@ import DateFormat from "sap/ui/core/format/DateFormat";
 import NumberFormat from "sap/ui/core/format/NumberFormat";
 import type RenderManager from "sap/ui/core/RenderManager";
 import Popup from "sap/ui/core/Popup";
+import { flagNames } from "./flags";
 import { icons } from "./icons";
 
 export type Press = { target: EventTarget | null; originalEvent: Event };
@@ -149,6 +150,36 @@ export function safeHref(href: string): string {
 	} catch {
 		return "";
 	}
+}
+/** Bayrak kodunu düzeltir ("TR", "gb_sct" → "tr", "gb-sct"); bilinmeyen kod boş döner */
+export function flagCode(code: string): string {
+	const key = (code || "").trim().toLowerCase().replace(/_/g, "-");
+	return flagNames[key] ? key : "";
+}
+/** Bayrak SVG adresi; bilinmeyen kod için "bilinmiyor" bayrağı */
+export function flagUrl(code: string, square = false): string {
+	return sap.ui.require.toUrl(`kor/ui/assets/flags/${square ? "1x1" : "4x3"}/${flagCode(code) || "xx"}.svg`);
+}
+const regionNames: Record<string, Intl.DisplayNames | null> = {};
+/** Ülke adı, uygulama dilinde (Intl); bölge ve kuruluşlar İngilizce kalır */
+export function countryName(code: string): string {
+	const key = flagCode(code);
+	if (!key) return "";
+	const lang = Core.getConfiguration().getLanguageTag().toString();
+	if (regionNames[lang] === undefined) {
+		try {
+			regionNames[lang] = new Intl.DisplayNames([lang], { type: "region", fallback: "none" });
+		} catch {
+			regionNames[lang] = null;
+		}
+	}
+	let local: string | undefined;
+	try {
+		local = /^[a-z]{2}$/.test(key) ? regionNames[lang]?.of(key.toUpperCase()) : undefined;
+	} catch {
+		local = undefined;
+	}
+	return local || flagNames[key];
 }
 export function faceHtml(name: string): string {
 	return `<span class="korFace korTone${tone(name)}" aria-hidden="true">${esc(initials(name))}</span>`;
