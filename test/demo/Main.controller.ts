@@ -18,14 +18,15 @@ import type Stack from "kor/ui/Stack";
 import Theme from "kor/ui/Theme";
 import type TreeGrid from "kor/ui/TreeGrid";
 import Toast from "kor/ui/Toast";
-import { num } from "kor/ui/util";
+import { dayText, num } from "kor/ui/util";
 import { model as data, periods, stageStatus } from "./data";
+import { finance } from "./finance";
 import type { Order } from "./data";
 import { bundle, language, t } from "./i18n";
 
 // Olay parametreleri 1.108 tiplerinde genel kayıttır
 const params = (event: Event): unknown => event.getParameters();
-const pages = new Set(["akis", "siparis", "pano", "plan", "maliyet", "bilesen"]);
+const pages = new Set(["akis", "siparis", "pano", "plan", "maliyet", "mutabakat", "kiralama", "bilesen"]);
 
 /** @namespace kor.ui.demo */
 export default class Main extends Controller {
@@ -33,7 +34,7 @@ export default class Main extends Controller {
 		return this.getView()!.getModel() as JSONModel;
 	}
 	onInit(): void {
-		const json = new JSONModel(data);
+		const json = new JSONModel({ ...data, fin: finance, finTab: "eslestir", leaseTab: "sozlesme" });
 		json.setSizeLimit(20000);
 		this.getView()!.setModel(json);
 		this.getView()!.setModel(new ResourceModel({ bundle }), "i18n");
@@ -294,5 +295,22 @@ export default class Main extends Controller {
 		this.json().setProperty(`/files/${at}/error`, "");
 		this.json().setProperty(`/files/${at}/progress`, 0);
 		this.upload(key);
+	}
+	onMatch(event: Event): void {
+		const p = params(event) as { action: string; keys: string[] };
+		Toast.show(t(p.action === "unmatch" ? "finUnmatched" : "finMatched"), { text: t("finRecords", String(p.keys.length)) });
+	}
+	onReconCell(event: Event): void {
+		const p = params(event) as { row: string; period: string };
+		const row = finance.partners.find((r) => r.key === p.row);
+		Toast.show(row?.title ?? "", { text: p.period });
+	}
+	onRespond(event: Event): void {
+		Toast.show(t((params(event) as { status: string }).status === "agreed" ? "finThanks" : "finObjectionSent"));
+	}
+	onSlot(event: Event): void {
+		const p = params(event) as { lane: string; date: Date };
+		const car = finance.fleet.find((f) => f.key === p.lane);
+		Toast.show(t("finNewBooking"), { text: `${car?.title ?? ""} · ${dayText(p.date)}` });
 	}
 }
