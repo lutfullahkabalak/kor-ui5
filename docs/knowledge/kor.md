@@ -72,7 +72,7 @@ Bulunan ve düzeltilen hatalar: V2 tarihinin bir gün kayması, Decimal'in sayı
 - `web/PLAN.md` B ve C tamamlandı. Kökte `npm run build` sonrası `npm run docs` ile `web/dist` üretilir. `npm run docs:check -- /components/` bileşenleri, süzgeçsiz komut tüm siteyi denetler. Bu turda 114 sayfa, eksik içerik/API 0. QUnit 1.108.55 ve 1.154.0’da 56/56.
 - `web/content/components` sayfaları alt öğeleri `children` ile ekler. API Türkçesi `src` JSDoc’undan, İngilizcesi `web/content/api-en.json` dosyasından gelir. Aynı adlı olay ve metot varsa metot anahtarında `()` kullanılır. Örnek kapsayıcısının `data-sample-state` özniteliği MessageList’in `[data-state]` aramasıyla çakışmaz.
 - Demo varsayılan İngilizce. `?lang=en|tr` başlatma sırasında UI5 dilini belirler. Metinler `test/demo/i18n*.properties` dosyalarındadır. Dil geçişi sayfayı yeniler, ekranı ve görünümü URL üzerinden korur. Sipariş süzgeçlerinin kayıtlı görünümleri dile göre ayrı tutulur çünkü durum değerleri yerelleştirilir.
-- `web/examples/orders`, yayımlanmış `kor-ui5@0.1.0` ile UI5 CLI üzerinden çalışır. `npm i && npx ui5 serve` sonrası sunucunun yazdığı adreste `/index.html` açılır. Site derlemesi bu projeyi arşivler ve statik kopyanın UI5 adresiyle `kor.ui` kaynak kökünü değiştirir.
+- `web/examples/orders`, yayımlanmış `kor-ui5@0.2.0` ile UI5 CLI üzerinden çalışır. `npm i && npx ui5 serve` sonrası sunucunun yazdığı adreste `/index.html` açılır. Site derlemesi bu projeyi arşivler ve statik kopyanın UI5 adresiyle `kor.ui` kaynak kökünü değiştirir.
 - `node scripts/shots.mjs` kök derlemenin `site/` çıktısından 1440×900 ana sayfa görsellerini üretir. Tarayıcı yolu gerekirse `CHROME_PATH` ile verilir. Siteyi yerelde ve iki dilde doğruladık. Yayın adımları `web/PLAN.md` D bölümündedir.
 
 ## Doküman sitesi (2026-11-25)
@@ -95,7 +95,7 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - DockBoard ve ShiftRoster veriyi değiştirmez, olay verir; Classroom ve TalentGrid öğenin kendi özelliğini değiştirir.
 - Pivot ve OrgChart tarayıcıdaki veriyle çalışır; büyük OData kümesi denenmedi.
 - Doğrulama: QUnit 89/89 iki sürümde; 46 örnek açık, koyu, 390 px ve RTL (kapsayıcıya `dir`) ekran görüntüsüyle bakıldı. TimeField/DateTimeField gerçek OData ile, ekran okuyucu ve dokunmatik denenmedi.
-- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. 0.2.0 GitHub sürümü ve site iki adreste yayında (2026-11-26, grafikler dahil); npm bekliyor: `npm run build`, sonra sahibi `cd npm && npm publish --access public`. Örnekler deposu npm sonrası 0.2.0'a yükseltilir.
+- Doküman sitesinin çıplak `table/th/td` kuralları örneklere sızıyordu, `.tableWrap` altına alındı. 0.2.0 GitHub, npm (2026-11-26), site (iki adres) ve örnekler deposunda yayında; grafikler dahil.
 
 ## Grafikler (2026-11-26)
 `Trend`, `Waterfall`, `Heatmap` yanına `PieChart` (pasta/halka, öğe `PieSlice`) ve `BarChart` (dikey/yatay, yan yana/yığın/yüzde, eksi değer; `Series` kullanır) eklendi; 0.2.0'a dahildir.
