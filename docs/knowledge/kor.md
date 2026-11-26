@@ -117,3 +117,17 @@ Sahibin isteği: sütunlar sürükle-bırakla yer değiştirsin, SAP GUI (ALV) d
 - Ekran okuyucu için `<id>-say` canlı alanı taşıma sonucunu söyler; tablo `aria-keyshortcuts` taşır.
 - Mac'te Ctrl+ok Mission Control'e gider; ⌘ ile çalışır, menü ipucu ⌘ gösterir. Gerçek Mac kısayol çakışması ve Windows Menü tuşu elle denenmedi.
 - RTL'de sürükleme ve menü yönü kodda ele alındı ama tarayıcıda denenmedi.
+
+## Kiralama ve e-mutabakat (2026-11-26)
+Sahibi "kiralama modülleri ve e-mutabakat için ne eklenebilir" diye sordu, önerilerin hepsini istedi. Eklenenler: MatchGrid/MatchEntry, ReconcileLetter, ReconMatrix/ReconRow/ReconCell, LeaseTimeline/LeaseEvent, EscalationField, DamageMap/DamageMark, SignaturePad; Installments `showBalance` + `Installment.remeasured`; Schedule `slotPress`. Demo: `#mutabakat`, `#kiralama` (veri `test/demo/finance.ts`, uydurma).
+- Ayrı kiralama panosu yazılmadı: Schedule (sürükleme, şerit, çakışma) + `slotPress` yeter. Fark köprüsü Waterfall, gönderim takibi Stat ile yapıldı.
+- MatchEntry tutarı iki tarafta aynı yönle verilir; karşı tarafın ekstresini çevirmek uygulamanın işi. Eşleşme kimliği `M1, M2…` (kullanılmayan ilk sayı). Tek taraflı kalan kimlik açık kalem sayılır.
+- MatchGrid ve DamageMap veriyi kendileri değiştirir, olayı `preventDefault` ile durdurulabilir. DamageMap `marks` bağlıysa eklenen öğe model yenilenince kaybolur: bağlıyken `change`'i durdurup modeli güncelle (demo statik işaret kullanır).
+- ReconcileLetter itiraz formunun değerleri DOM'da durur, yazarken yeniden çizilmez; sebep seçimi `aria-checked` ile DOM'da değişir. Boş/okunamayan bakiye `REQUIRED` hatası verir.
+- Yasal eşik ve tavanlar (BA/BS sınırı, kira artış tavanı) koda gömülmedi: `threshold`, `cap` uygulamadan gelir.
+- SignaturePad klavyeyle imzalanamaz ve hukuki e-imza değildir; dokümanda yazılı.
+- Ders: otomasyonla yapılan tıklama `mouseover/mouseout` üretmez; üzerine gelme vurgusu yalnız DOM'da tutulursa yeniden çizimde kalıyordu. Vurgu durumu (`lit`) çizime taşındı.
+- Ders: MatchGrid seçim çubuğu yapışkandır, ilk seçimden sonra alttaki satırları örtebilir; tarayıcı denetiminde koordinatla değil öğeyle tıkla.
+- Doğrulama: QUnit Finance 9/9, toplam 103 test 1.108.55 ve 1.154.0'da geçti; site 210 sayfa, 0 hata. Tarayıcıda açık/koyu, 390 px ve Türkçe bakıldı. RTL, dokunmatik imza, ekran okuyucu ve gerçek OData denenmedi.
+- Yayın: yayınlanmadı (sürüm hâlâ 0.2.0). Örnek deposu yayımlanmış paketi kullandığı için oradaki `e-reconciliation` ve `lease-contracts` uygulamaları sonraki sürümden sonra eklenebilir.
+
