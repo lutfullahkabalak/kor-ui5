@@ -20,11 +20,22 @@ export default {
 		en: ["Hierarchical data: use TreeGrid.", "A handful of facts about one object: use Stat or Text."],
 		tr: ["Hiyerarşik veri: TreeGrid kullan.", "Tek nesneye ait birkaç bilgi: Stat veya Text kullan."]
 	},
+	keyboard: [
+		["←, →, ↑, ↓", { en: "Move between cells. With Shift, extend the range; the footer shows its total.", tr: "Hücreler arasında gezer. Shift ile aralığı genişletir; alt çubuk toplamı gösterir." }],
+		["Enter, F2", { en: "Edit the cell, or open the row if the cell is read-only.", tr: "Hücreyi düzenler; düzenlenemiyorsa satırı açar." }],
+		["Space", { en: "Select the row when selectionMode is Multi.", tr: "selectionMode Multi ise satırı seçer." }],
+		["Ctrl+C, Ctrl+V", { en: "Copy the range, or paste rows and columns from Excel.", tr: "Aralığı kopyalar veya Excel'den satır ve sütun yapıştırır." }],
+		["Ctrl+←, Ctrl+→", { en: "Move the active column. A header can also be dragged.", tr: "Etkin sütunu taşır. Başlık sürüklenerek de taşınır." }],
+		["Shift+F10", { en: "Column menu: sort, optimal width, move, hide. Right-click a header for the same menu.", tr: "Sütun menüsü: sıralama, en uygun genişlik, taşıma, gizleme. Başlığa sağ tıklamak da açar." }],
+		["Ctrl+F", { en: "Find in the table. Enter goes to the next match, Shift+Enter to the previous one.", tr: "Tabloda arar. Enter sonraki, Shift+Enter önceki eşleşmeye gider." }],
+		["Ctrl+G, Ctrl+Shift+G", { en: "Next or previous match of the last search.", tr: "Son aramanın sonraki veya önceki eşleşmesi." }],
+		["Escape", { en: "Collapse the range, close the search, or cancel a column drag.", tr: "Aralığı daraltır, aramayı kapatır veya sütun sürüklemeyi iptal eder." }]
+	],
 	related: ["TreeGrid", "FilterBar", "Variants"],
 	samples: [
 		{
 			title: { en: "Orders", tr: "Siparişler" },
-			text: { en: "500 rows. Drag across amounts to see their total, double-click a customer to edit it.", tr: "500 satır. Tutarlar üzerinde sürükleyince toplam görünür; müşteriye çift tıklayınca düzenlenir." },
+			text: { en: "500 rows. Drag across amounts to see their total, double-click a customer to edit it. Drag a header to move its column; double-click a column border to fit it.", tr: "500 satır. Tutarlar üzerinde sürükleyince toplam görünür; müşteriye çift tıklayınca düzenlenir. Başlığı sürükleyerek sütunu taşıyın; sütun ayracına çift tıklayınca genişlik içeriğe uyar." },
 			xml: `<k:DataGrid rows="{/orders}" selectionMode="Multi" height="26rem" label="[[Orders||Siparişler]]" rowPress=".onOpen" cellChange=".onChange">
 	<k:columns>
 		<k:Column label="[[Order||Sipariş]]" path="Id" type="link" width="120" pinned="true"/>

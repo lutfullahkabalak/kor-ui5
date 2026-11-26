@@ -10,7 +10,7 @@ const gridRenderer = {
 	render(rm: RenderManager, c: GridLike) {
 		const id = c.getId();
 		rm.openStart("div", c).class("korGrid").style("height", c.getHeight()).openEnd();
-		rm.openStart("div", `${id}-scroll`).class("korGridScroll").attr("tabindex", "0").attr("role", c.gridRole()).attr("aria-label", c.getLabel()).attr("aria-colcount", c.getColumns().length);
+		rm.openStart("div", `${id}-scroll`).class("korGridScroll").attr("tabindex", "0").attr("role", c.gridRole()).attr("aria-label", c.getLabel()).attr("aria-colcount", c.getColumns().length).attr("aria-keyshortcuts", "Control+F Control+G Shift+F10 Control+ArrowLeft Control+ArrowRight");
 		if (c.getSelectionMode() === "Multi") rm.attr("aria-multiselectable", "true");
 		rm.openEnd();
 		rm.openStart("div", `${id}-canvas`).class("korGridCanvas").attr("role", "presentation").openEnd();
@@ -19,6 +19,7 @@ const gridRenderer = {
 		rm.close("div");
 		rm.openStart("div", `${id}-none`).class("korGridNone").attr("hidden", "hidden").openEnd().text(c.getNoData() || message("NO_DATA")).close("div");
 		rm.close("div");
+		rm.openStart("span", `${id}-say`).class("korSr").attr("aria-live", "polite").openEnd().close("span");
 		if (c.getSummary()) rm.openStart("div", `${id}-foot`).class("korGridFoot").attr("aria-live", "polite").openEnd().close("div");
 		rm.close("div");
 	}

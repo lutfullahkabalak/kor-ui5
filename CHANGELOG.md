@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- DataGrid: drag a column header to move the column (Ctrl+← / Ctrl+→ from the keyboard)
+- DataGrid: column menu on right-click or Shift+F10 with sort, optimal width, move, hide
+- DataGrid: double-click a column border for optimal width; Ctrl+F finds, Ctrl+G goes to the next match
+- No breaking changes
+
 ## 0.2.0
 
 - App: Accordion, Breadcrumbs, Wizard, Splitter, ColumnLayout, RecordPage, Inbox

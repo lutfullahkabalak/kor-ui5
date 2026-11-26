@@ -6,7 +6,7 @@ import type Column from "./Column";
 import Calendar, { readDate, showDate } from "./Calendar";
 import gridRenderer from "./gridRenderer";
 import Toast from "./Toast";
-import { Float, dayText, esc, faceHtml, iconHtml, dateValue, isRtl, isoDate, message, num, parseNum, pct, sparkHtml, statusHtml, toDate } from "./util";
+import { Float, dayText, esc, faceHtml, fold, iconHtml, dateValue, isMac, isRtl, isoDate, message, nextZ, num, parseNum, pct, sparkHtml, staticArea, statusHtml, toDate } from "./util";
 import "./library";
 
 type Raw = { originalEvent: PointerEvent };
@@ -77,11 +77,25 @@ export default class DataGrid extends Control {
 	private order: string[] = [];
 	private hidden = new Set<string>();
 	private settings?: Float;
+	private menu?: { float: Float; col: number };
+	private finder?: { el: HTMLElement; input: HTMLInputElement; count: HTMLElement };
+	private findText = "";
+	private hits?: { query: string; list: Cell[]; partial: boolean };
+	/** Sütun sürüklendi; ardından gelen tıklama sıralama yapmasın */
+	private dragged = false;
 
 	init(): void {
 		this.attachBrowserEvent("pointerdown", (e: unknown) => this.pointerDown((e as Raw).originalEvent));
+		this.attachBrowserEvent("contextmenu", (e: unknown) => this.contextMenu((e as Raw).originalEvent));
 		this.attachBrowserEvent("dblclick", (e: unknown) => {
-			const cell = this.cellOf((e as Raw).originalEvent.target as HTMLElement);
+			const target = (e as Raw).originalEvent.target as HTMLElement;
+			// Ayraçta çift basış sütunu içeriğe göre genişletir (SAP GUI: en uygun genişlik)
+			const grip = target.closest<HTMLElement>("[data-grip]");
+			if (grip) {
+				this.fitColumn(Number(grip.dataset.grip));
+				return;
+			}
+			const cell = this.cellOf(target);
 			// Düzenlenemeyen hücrede çift basış satırı açar
 			if (cell && !this.edit(cell)) this.press(cell.row);
 		});
@@ -92,6 +106,7 @@ export default class DataGrid extends Control {
 	exit(): void {
 		this.editor?.close?.();
 		this.settings?.close();
+		this.menu?.float.close();
 		this.observer?.disconnect();
 		cancelAnimationFrame(this.frame);
 	}
@@ -224,7 +239,9 @@ export default class DataGrid extends Control {
 			event.preventDefault();
 			event.stopPropagation();
 			this.settings?.close();
-			anchor.focus();
+			// Sütun menüsünden açıldıysa odak tabloya döner
+			if (this.getDomRef()?.contains(anchor)) this.scroller()?.focus({ preventScroll: true });
+			else anchor.focus();
 		});
 		this.settings = new Float(anchor, panel, () => (this.settings = undefined), false);
 		panel.querySelector<HTMLElement>("[data-toggle]")?.focus();
@@ -232,6 +249,7 @@ export default class DataGrid extends Control {
 
 	/* Bağlama: satır öğesi üretilmez, bağlamlar doğrudan çizilir */
 	updateRows(): void {
+		this.hits = undefined;
 		this.load();
 		// Geç gelen veri açık düzenlemeyi bozmasın
 		if (this.editor) {
@@ -307,6 +325,8 @@ export default class DataGrid extends Control {
 	/* Çizim */
 	onAfterRendering(): void {
 		this.drawn.clear();
+		// Arama çubuğu eski DOM'la gitti
+		this.finder = undefined;
 		this.editor?.close?.();
 		this.editor = undefined;
 		const s = this.scroller() as HTMLElement;
@@ -327,6 +347,7 @@ export default class DataGrid extends Control {
 	protected repaint(): void {
 		if (!this.scroller()) return;
 		if (this.active.row >= this.total) this.active = this.anchor = { row: Math.max(0, this.total - 1), col: this.active.col };
+		this.hits = undefined;
 		this.measure();
 		this.load();
 		this.drawn.forEach((el) => el.remove());
@@ -356,7 +377,7 @@ export default class DataGrid extends Control {
 				.map((c, i) => {
 					const on = this.sortPath === c.getPath();
 					const sort = on ? (this.sortDesc ? "descending" : "ascending") : "none";
-					return `<div class="korCell${this.numeric(c) ? " korCellNum" : ""}" role="columnheader" aria-colindex="${i + 1}" aria-sort="${sort}" style="width:${this.widths[i]}px;${this.pinStyle(i)}">${c.getSortable() ? `<button type="button" tabindex="-1" class="korSort${on ? " korOn" : ""}" data-sort="${i}"><span>${esc(c.getLabel())}</span>${iconHtml(on && this.sortDesc ? "arrow-down" : "arrow-up")}</button>` : `<span class="korSort">${esc(c.getLabel())}</span>`}<span class="korGrip" data-grip="${i}"></span></div>`;
+					return `<div class="korCell${this.numeric(c) ? " korCellNum" : ""}${c.getPinned() ? "" : " korCellMove"}" role="columnheader" aria-colindex="${i + 1}" aria-sort="${sort}" style="width:${this.widths[i]}px;${this.pinStyle(i)}">${c.getSortable() ? `<button type="button" tabindex="-1" class="korSort${on ? " korOn" : ""}" data-sort="${i}"><span>${esc(c.getLabel())}</span>${iconHtml(on && this.sortDesc ? "arrow-down" : "arrow-up")}</button>` : `<span class="korSort">${esc(c.getLabel())}</span>`}<span class="korGrip" data-grip="${i}"></span></div>`;
 				})
 				.join("");
 	}
@@ -524,9 +545,15 @@ export default class DataGrid extends Control {
 	}
 	private pointerDown(event: PointerEvent): void {
 		const target = event.target as HTMLElement;
+		this.menu?.float.close();
 		const grip = target.closest<HTMLElement>("[data-grip]");
 		if (grip) {
 			this.resize(event, Number(grip.dataset.grip));
+			return;
+		}
+		const header = target.closest<HTMLElement>(".korGridHead [aria-colindex]");
+		if (header && event.button === 0 && event.pointerType !== "touch") {
+			this.dragColumn(event, Number(header.getAttribute("aria-colindex")) - 1);
 			return;
 		}
 		if (target.closest(".korCellEditor") || event.button !== 0) return;
@@ -569,8 +596,342 @@ export default class DataGrid extends Control {
 		window.addEventListener("pointermove", drag);
 		window.addEventListener("pointerup", up);
 	}
+	/** Baştaki sabit sütun sayısı; sürüklenen sütun bunların önüne geçemez */
+	private pins(): number {
+		const at = this.cols().findIndex((c) => !c.getPinned());
+		return at < 0 ? this.cols().length : at;
+	}
+	/**
+	 * Görünen `from` sütununu görünen `to` sütununun önüne taşır (`to` = sayı ise sona).
+	 * Gizli sütunlar yerinde kalır; etkin hücre kendi sütununu izler.
+	 */
+	private moveColumn(from: number, to: number): boolean {
+		const cols = this.cols();
+		const moving = cols[from];
+		to = Math.max(this.pins(), Math.min(cols.length, to));
+		if (!moving || moving.getPinned() || to === from || to === from + 1) return false;
+		const followed = cols[this.active.col];
+		const list = this.ordered().filter((c) => c !== moving);
+		const before = cols[to];
+		list.splice(before ? list.indexOf(before) : list.indexOf(cols[cols.length - 1]) + 1, 0, moving);
+		this.order = list.map((c) => this.columnKey(c));
+		const now = this.cols();
+		this.active = { row: this.active.row, col: Math.max(0, now.indexOf(followed)) };
+		this.columnsChanged(true);
+		this.say(message("COLUMN_MOVED", [moving.getLabel(), now.indexOf(moving) + 1, now.length]));
+		return true;
+	}
+	/** Ekran okuyucuya kısa bilgi */
+	private say(text: string): void {
+		const live = this.getDomRef("say");
+		if (live) live.textContent = text;
+	}
+	/** Başlığı sürükleyip bırakarak sütun taşıma (SAP GUI ALV gibi); Escape iptal eder */
+	private dragColumn(event: PointerEvent, from: number): void {
+		const column = this.cols()[from];
+		const head = this.getDomRef("head") as HTMLElement;
+		const s = this.scroller() as HTMLElement;
+		if (!column || column.getPinned()) return;
+		const start = event.clientX;
+		const grab = start - (head.querySelector<HTMLElement>(`[aria-colindex="${from + 1}"]`) as HTMLElement).getBoundingClientRect().left;
+		let x = start;
+		let to = -1;
+		let frame = 0;
+		let ghost: HTMLElement | undefined;
+		let mark: HTMLElement | undefined;
+		const headers = () => [...head.querySelectorAll<HTMLElement>("[aria-colindex]")];
+		const place = () => {
+			const cells = headers();
+			const rtl = isRtl();
+			const at = cells.findIndex((c) => {
+				const r = c.getBoundingClientRect();
+				return rtl ? x > r.left + r.width / 2 : x < r.left + r.width / 2;
+			});
+			to = Math.max(this.pins(), at < 0 ? cells.length : at);
+			const box = head.getBoundingClientRect();
+			const ref = cells[Math.min(to, cells.length - 1)].getBoundingClientRect();
+			const lead = to < cells.length;
+			const edge = lead === !rtl ? ref.left : ref.right;
+			mark!.style.left = `${edge - box.left - 1}px`;
+			mark!.hidden = to === from || to === from + 1;
+			ghost!.style.left = `${x - grab}px`;
+			ghost!.style.top = `${box.bottom - 12}px`;
+		};
+		// Kenara yaklaşınca yatay kaydırır
+		const tick = () => {
+			const r = s.getBoundingClientRect();
+			const step = x < r.left + 40 ? -14 : x > r.right - 40 ? 14 : 0;
+			if (step) {
+				s.scrollLeft += step;
+				place();
+			}
+			frame = requestAnimationFrame(tick);
+		};
+		const begin = () => {
+			this.commit(false);
+			const root = this.getDomRef() as HTMLElement;
+			root.classList.add("korGridMoving");
+			head.querySelector(`[aria-colindex="${from + 1}"]`)?.classList.add("korColDrag");
+			(this.getDomRef("body") as HTMLElement).querySelectorAll(`[data-col="${from}"]`).forEach((el) => el.classList.add("korColDrag"));
+			mark = document.createElement("div");
+			mark.className = "korGridMark";
+			mark.style.height = `${s.clientHeight - 8}px`;
+			head.appendChild(mark);
+			ghost = document.createElement("div");
+			ghost.className = "korGridGhost";
+			ghost.style.zIndex = String(nextZ());
+			ghost.style.width = `${Math.min(220, this.widths[from])}px`;
+			ghost.innerHTML = `${iconHtml("grip-vertical")}<span>${esc(column.getLabel())}</span>`;
+			staticArea().appendChild(ghost);
+			place();
+			frame = requestAnimationFrame(tick);
+		};
+		const end = (drop: boolean) => {
+			window.removeEventListener("pointermove", drag);
+			window.removeEventListener("pointerup", up);
+			window.removeEventListener("keydown", key, true);
+			if (!ghost) return;
+			cancelAnimationFrame(frame);
+			ghost.remove();
+			mark?.remove();
+			this.getDomRef()?.classList.remove("korGridMoving");
+			this.dragged = true;
+			window.setTimeout(() => (this.dragged = false));
+			if (!drop || !this.moveColumn(from, to)) this.repaint();
+			this.scroller()?.focus({ preventScroll: true });
+		};
+		const drag = (e: PointerEvent) => {
+			x = e.clientX;
+			if (!ghost && Math.abs(x - start) > 5) begin();
+			if (ghost) {
+				e.preventDefault();
+				place();
+			}
+		};
+		const up = () => end(true);
+		const key = (e: KeyboardEvent) => {
+			if (e.key !== "Escape") return;
+			e.preventDefault();
+			e.stopPropagation();
+			end(false);
+		};
+		window.addEventListener("pointermove", drag);
+		window.addEventListener("pointerup", up);
+		window.addEventListener("keydown", key, true);
+	}
+	/** İçeriğe göre genişlik: başlık ve çizili satırlar ölçülür */
+	private fitColumn(col: number): void {
+		const column = this.cols()[col];
+		const root = this.getDomRef();
+		if (!column || !root) return;
+		// Kopya, aynı yerde ama görünmeden ve satır kaydırmadan ölçülür
+		const natural = (cell: HTMLElement) => {
+			const copy = cell.cloneNode(true) as HTMLElement;
+			copy.removeAttribute("id");
+			copy.style.cssText = "position:absolute;visibility:hidden;width:max-content;white-space:nowrap;";
+			cell.parentElement!.appendChild(copy);
+			const width = copy.getBoundingClientRect().width;
+			copy.remove();
+			return width;
+		};
+		const cells = [root.querySelector<HTMLElement>(`.korGridHead [aria-colindex="${col + 1}"]`), ...root.querySelectorAll<HTMLElement>(`.korGridBody [data-col="${col}"]`)].filter(Boolean) as HTMLElement[];
+		const width = Math.max(64, Math.min(640, Math.ceil(Math.max(...cells.map(natural))) + 2));
+		this.userWidths.set(column.getId(), width);
+		this.repaint();
+		this.fireStateChange();
+	}
+	private contextMenu(event: MouseEvent): void {
+		const target = event.target as HTMLElement;
+		const header = target.closest<HTMLElement>(".korGridHead [aria-colindex]");
+		// Klavyeden (Menü tuşu, Shift+F10) gelen istek tablonun kendisine düşer
+		if (header) this.openMenu(Number(header.getAttribute("aria-colindex")) - 1);
+		else if (target === this.scroller() && this.total) this.openMenu(this.active.col);
+		else return;
+		event.preventDefault();
+	}
+	/** Sütun menüsü: sıralama, en uygun genişlik, taşıma, gizleme, sütun ayarı */
+	private openMenu(col: number): void {
+		if (this.menu?.col === col) return;
+		this.menu?.float.close();
+		const cols = this.cols();
+		const column = cols[col];
+		const anchor = this.getDomRef("head")?.querySelector<HTMLElement>(`[aria-colindex="${col + 1}"]`);
+		if (!column || !anchor) return;
+		this.commit(false);
+		const rtl = isRtl();
+		const mod = isMac() ? "⌘" : "Ctrl+";
+		const sortable = column.getSortable() && !!this.getBinding("rows");
+		const on = this.sortPath === column.getPath();
+		const back = column.getPinned() || col <= this.pins();
+		const ahead = column.getPinned() || col >= cols.length - 1;
+		type Item = { key: string; icon: string; text: string; off?: boolean; checked?: boolean; hint?: string };
+		const items: Item[] = [
+			...(sortable ? [{ key: "asc", icon: "arrow-up", text: "SORT_ASC", checked: on && !this.sortDesc }, { key: "desc", icon: "arrow-down", text: "SORT_DESC", checked: on && this.sortDesc }] : []),
+			...(sortable && on ? [{ key: "unsort", icon: "x", text: "SORT_CLEAR" }] : []),
+			{ key: "fit", icon: "move-horizontal", text: "FIT_WIDTH" },
+			{ key: "left", icon: "arrow-left", text: "MOVE_LEFT", off: rtl ? ahead : back, hint: `${mod}←` },
+			{ key: "right", icon: "arrow-right", text: "MOVE_RIGHT", off: rtl ? back : ahead, hint: `${mod}→` },
+			{ key: "hide", icon: "eye-off", text: "HIDE_COLUMN", off: column.getPinned() || cols.length === 1 },
+			{ key: "columns", icon: "columns-3", text: "COLUMNS" }
+		];
+		const el = document.createElement("div");
+		el.className = "korMenu korGridMenu";
+		el.setAttribute("role", "menu");
+		el.setAttribute("aria-label", message("COLUMN_MENU", [column.getLabel()]));
+		el.innerHTML = `<div class="korMenuHead">${esc(column.getLabel())}</div>${items
+			.map((item) => {
+				const role = item.checked === undefined ? "menuitem" : `menuitemradio" aria-checked="${item.checked}`;
+				return `<button type="button" role="${role}" tabindex="-1" class="korMenuItem" data-key="${item.key}"${item.off ? " disabled" : ""}>${iconHtml(item.icon)}<span>${esc(message(item.text))}</span>${item.hint ? `<kbd class="korKbd">${esc(item.hint)}</kbd>` : ""}</button>`;
+			})
+			.join("")}`;
+		const buttons = [...el.querySelectorAll<HTMLButtonElement>("button:not(:disabled)")];
+		const close = () => {
+			this.menu?.float.close();
+			this.scroller()?.focus({ preventScroll: true });
+		};
+		el.addEventListener("click", (event) => {
+			const key = (event.target as HTMLElement).closest<HTMLButtonElement>("button:not(:disabled)")?.dataset.key;
+			if (!key) return;
+			close();
+			const binding = this.getBinding("rows") as Binding | undefined;
+			if (key === "asc" || key === "desc") this.sort(column, key === "desc");
+			else if (key === "unsort") {
+				this.sortPath = "";
+				this.sortDesc = false;
+				binding?.sort([] as never);
+				this.fireStateChange();
+			} else if (key === "fit") this.fitColumn(col);
+			else if (key === "left" || key === "right") {
+				if (this.moveColumn(col, (key === "right") !== rtl ? col + 2 : col - 1)) this.move(this.active, false);
+			} else if (key === "hide") {
+				this.hidden.add(this.columnKey(column));
+				this.columnsChanged(true);
+			} else if (key === "columns") this.openSettings(this.getDomRef("head")?.querySelector<HTMLElement>(`[aria-colindex="${Math.min(col, this.cols().length - 1) + 1}"]`) ?? this.scroller()!);
+		});
+		el.addEventListener("keydown", (event) => {
+			const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
+			const step = { ArrowDown: 1, ArrowUp: -1 }[event.key];
+			if (step) {
+				event.preventDefault();
+				buttons[(at + step + buttons.length) % buttons.length].focus();
+			} else if (event.key === "Home" || event.key === "End") {
+				event.preventDefault();
+				buttons[event.key === "Home" ? 0 : buttons.length - 1].focus();
+			} else if (event.key === "Escape" || event.key === "Tab") {
+				event.preventDefault();
+				event.stopPropagation();
+				close();
+			}
+		});
+		this.menu = { float: new Float(anchor, el, () => (this.menu = undefined), false), col };
+		buttons[0]?.focus();
+	}
+
+	/* Arama (SAP GUI: Ctrl+F bul, Ctrl+G sonrakini bul) */
+	private openFind(step = 0): void {
+		const root = this.getDomRef() as HTMLElement | null;
+		if (!root) return;
+		if (!this.finder) {
+			const el = document.createElement("div");
+			el.className = "korGridFind";
+			el.setAttribute("role", "search");
+			el.innerHTML = `${iconHtml("search")}<input class="korInput" type="text" spellcheck="false" autocomplete="off" aria-label="${esc(message("FIND"))}" placeholder="${esc(message("FIND"))}…"><span class="korGridFindCount" aria-live="polite"></span><button type="button" class="korCalOpen" data-find="-1" aria-label="${esc(message("FIND_PREV"))}">${iconHtml("chevron-up")}</button><button type="button" class="korCalOpen" data-find="1" aria-label="${esc(message("FIND_NEXT"))}">${iconHtml("chevron-down")}</button><button type="button" class="korCalOpen" data-find="0" aria-label="${esc(message("CLOSE"))}">${iconHtml("x")}</button>`;
+			const input = el.querySelector("input") as HTMLInputElement;
+			input.value = this.findText;
+			this.finder = { el, input, count: el.querySelector(".korGridFindCount") as HTMLElement };
+			input.addEventListener("input", () => this.find(0));
+			input.addEventListener("keydown", (event) => {
+				const mod = event.ctrlKey || event.metaKey;
+				const key = event.key.toLowerCase();
+				if (event.key === "Enter" || (mod && key === "g") || event.key === "F3") {
+					event.preventDefault();
+					this.find(event.shiftKey ? -1 : 1);
+				} else if (event.key === "Escape") {
+					event.preventDefault();
+					event.stopPropagation();
+					this.closeFind();
+				} else if (mod && key === "f") {
+					event.preventDefault();
+					input.select();
+				}
+			});
+			el.addEventListener("click", (event) => {
+				const dir = (event.target as HTMLElement).closest<HTMLElement>("[data-find]")?.dataset.find;
+				if (dir === "0") this.closeFind();
+				else if (dir) {
+					this.find(Number(dir));
+					input.focus();
+				}
+			});
+			root.appendChild(el);
+			root.classList.add("korGridFinding");
+		}
+		this.finder.input.focus();
+		this.finder.input.select();
+		if (this.finder.input.value) this.find(step);
+	}
+	private closeFind(): void {
+		this.finder?.el.remove();
+		this.finder = undefined;
+		this.getDomRef()?.classList.remove("korGridFinding");
+		this.scroller()?.focus({ preventScroll: true });
+	}
+	/** Eşleşen hücreler, satır sırasıyla; sunucudan gelmemiş satırlar atlanır */
+	private matches(query: string): { list: Cell[]; partial: boolean } {
+		if (this.hits?.query === query) return this.hits;
+		const cols = this.cols();
+		const rows = this.fetch(0, this.total);
+		const list: Cell[] = [];
+		let partial = false;
+		for (let row = 0; row < this.total; row++) {
+			const context = rows[row];
+			if (!context) {
+				partial = true;
+				continue;
+			}
+			cols.forEach((c, col) => {
+				if (fold(this.text(c, context)).includes(query)) list.push({ row, col });
+			});
+		}
+		this.hits = { query, list, partial };
+		return this.hits;
+	}
+	/** 0: etkin hücreden başlar, 1: sonraki, -1: önceki eşleşme; sona gelince başa döner */
+	private find(dir: number): void {
+		const finder = this.finder;
+		if (!finder) return;
+		this.findText = finder.input.value;
+		const query = fold(this.findText.trim());
+		finder.input.removeAttribute("aria-invalid");
+		finder.count.classList.remove("korGridFindNone");
+		if (!query) {
+			finder.count.textContent = "";
+			return;
+		}
+		const { list, partial } = this.matches(query);
+		if (!list.length) {
+			finder.input.setAttribute("aria-invalid", "true");
+			finder.count.classList.add("korGridFindNone");
+			finder.count.textContent = message("FIND_NONE");
+			return;
+		}
+		const cols = this.cols().length;
+		const here = this.active.row * cols + this.active.col;
+		const at = (c: Cell) => c.row * cols + c.col;
+		let i = -1;
+		if (dir < 0) for (let k = list.length - 1; k >= 0 && i < 0; k--) i = at(list[k]) < here ? k : -1;
+		else i = list.findIndex((c) => (dir ? at(c) > here : at(c) >= here));
+		if (i < 0) i = dir < 0 ? list.length - 1 : 0;
+		this.move(list[i], false);
+		finder.count.textContent = `${message("FIND_COUNT", [num(i + 1), num(list.length)])}${partial ? ` · ${message("FIND_LOADED")}` : ""}`;
+	}
+
 	private click(event: MouseEvent): void {
 		const target = event.target as HTMLElement;
+		if (this.dragged) {
+			this.dragged = false;
+			return;
+		}
 		const sort = target.closest<HTMLElement>("[data-sort]");
 		if (sort) this.sort(this.cols()[Number(sort.dataset.sort)]);
 		else if (target.closest("[data-all]")) this.pickAll();
@@ -584,14 +945,13 @@ export default class DataGrid extends Control {
 		const context = this.context(row);
 		if (context) this.fireRowPress({ context });
 	}
-	private sort(column: Column): void {
+	/** Başlığa basış yönü çevirir; menüden yön açıkça verilir */
+	private sort(column: Column, desc?: boolean): void {
 		const binding = this.getBinding("rows") as Binding | undefined;
 		if (!binding) return;
-		if (this.sortPath === column.getPath()) this.sortDesc = !this.sortDesc;
-		else {
-			this.sortPath = column.getPath();
-			this.sortDesc = false;
-		}
+		if (desc !== undefined) this.sortDesc = desc;
+		else this.sortDesc = this.sortPath === column.getPath() ? !this.sortDesc : false;
+		this.sortPath = column.getPath();
 		binding.sort(new Sorter(this.sortPath, this.sortDesc));
 		this.fireStateChange();
 	}
@@ -692,9 +1052,24 @@ export default class DataGrid extends Control {
 			Home: { row: mod ? 0 : row, col: 0 },
 			End: { row: mod ? this.total - 1 : row, col: lastCol }
 		};
-		if (moves[event.key]) {
+		const key = event.key.toLowerCase();
+		if (mod && !event.shiftKey && !event.altKey && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+			// Ctrl+← / Ctrl+→: etkin sütunu taşır (UI5 tablo ve Kor Board ile aynı)
+			event.preventDefault();
+			const ahead = (event.key === "ArrowRight") === (side > 0);
+			if (this.moveColumn(col, ahead ? col + 2 : col - 1)) this.move(this.active, false);
+		} else if (moves[event.key]) {
 			event.preventDefault();
 			this.move(moves[event.key], event.shiftKey);
+		} else if (mod && !event.altKey && key === "f") {
+			event.preventDefault();
+			this.openFind();
+		} else if (mod && !event.altKey && key === "g") {
+			event.preventDefault();
+			this.openFind(event.shiftKey ? -1 : 1);
+		} else if (event.key === "F10" && event.shiftKey) {
+			event.preventDefault();
+			this.openMenu(col);
 		} else if (event.key === "Enter" || event.key === "F2") {
 			event.preventDefault();
 			if (!this.edit(this.active)) this.press(row);

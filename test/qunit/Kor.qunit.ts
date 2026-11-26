@@ -222,6 +222,101 @@ QUnit.test("DataGrid: hatalı sayı yazılmaz, Excel'den yapıştırılır", (as
 	assert.strictEqual(model.getProperty("/rows/2/amount"), 20);
 });
 
+QUnit.test("DataGrid: başlık sürüklenerek ve Ctrl+ok ile sütun taşınır", (assert) => {
+	const { grid: control } = grid(5, { columns: [new Column({ label: "No", path: "id" }), new Column({ label: "Tutar", path: "amount", type: "number" }), new Column({ label: "Uzunluk", path: "id/length", type: "number" })] });
+	const root = () => control.getDomRef() as HTMLElement;
+	const heads = () => all(root(), "[role=columnheader][aria-colindex]").map((h) => h.textContent);
+	let told = 0;
+	control.attachEvent("stateChange", () => told++);
+	const scroll = one(root(), "[role=grid]");
+	scroll.focus();
+	key(scroll, "ArrowRight", { ctrlKey: true });
+	assert.deepEqual(heads(), ["Tutar", "No", "Uzunluk"]);
+	assert.strictEqual(one(root(), ".korCellActive").dataset.col, "1", "etkin hücre sütunla gider");
+	assert.ok(one(root(), ".korSr").textContent!.includes("No"), "ekran okuyucuya söylenir");
+	key(scroll, "ArrowLeft", { ctrlKey: true });
+	assert.deepEqual(heads(), ["No", "Tutar", "Uzunluk"]);
+	key(scroll, "ArrowLeft", { ctrlKey: true });
+	assert.deepEqual(heads(), ["No", "Tutar", "Uzunluk"], "ilk sütun daha sola gitmez");
+	const header = (i: number) => one(root(), `[role=columnheader][aria-colindex="${i}"]`);
+	const drag = (from: number, toX: number, cancel = false) => {
+		const r = header(from).getBoundingClientRect();
+		header(from).dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, button: 0, pointerType: "mouse", clientX: r.left + 10, clientY: r.top + 10 }));
+		window.dispatchEvent(new PointerEvent("pointermove", { clientX: r.left + 30, clientY: r.top + 10 }));
+		window.dispatchEvent(new PointerEvent("pointermove", { clientX: toX, clientY: r.top + 10 }));
+		assert.ok(document.querySelector(".korGridGhost"), "sürüklenen başlık görünür");
+		if (cancel) window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+		window.dispatchEvent(new PointerEvent("pointerup", { clientX: toX, clientY: r.top + 10 }));
+		header(1).click();
+	};
+	drag(1, header(3).getBoundingClientRect().right - 4);
+	assert.deepEqual(heads(), ["Tutar", "Uzunluk", "No"], "sona bırakıldı");
+	assert.strictEqual(document.querySelector(".korGridGhost"), null);
+	assert.strictEqual(header(1).getAttribute("aria-sort"), "none", "bırakış sıralama yapmaz");
+	drag(3, header(1).getBoundingClientRect().left + 4, true);
+	assert.deepEqual(heads(), ["Tutar", "Uzunluk", "No"], "Escape iptal eder");
+	assert.strictEqual(told, 3);
+	assert.deepEqual((control.getState() as { order: string[] }).order, ["amount", "id/length", "id"], "durum kaydedilir");
+});
+
+QUnit.test("DataGrid: sütun menüsü ve en uygun genişlik", (assert) => {
+	const { grid: control, model } = grid(5);
+	const root = () => control.getDomRef() as HTMLElement;
+	model.setProperty("/rows/2/id", "Çok uzun bir sipariş numarası ve açıklaması");
+	const scroll = one(root(), "[role=grid]");
+	scroll.focus();
+	key(scroll, "ArrowRight");
+	key(scroll, "F10", { shiftKey: true });
+	const menu = one(document, ".korGridMenu");
+	assert.ok(menu.textContent!.includes("Tutar"), "etkin sütunun menüsü");
+	assert.strictEqual(document.activeElement, one(menu, "[data-key=asc]"));
+	one(menu, "[data-key=desc]").click();
+	assert.strictEqual(document.querySelector(".korGridMenu"), null);
+	assert.strictEqual(one(root(), '[data-row="0"][data-col="0"]').textContent, "S4");
+	assert.strictEqual(document.activeElement, one(root(), "[role=grid]"), "odak tabloya döner");
+	const first = one(root(), '[role=columnheader][aria-colindex="1"]');
+	first.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+	assert.ok(one(document, ".korGridMenu [data-key=left]").hasAttribute("disabled"), "ilk sütun sola gitmez");
+	one(document, ".korGridMenu").dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+	assert.strictEqual(document.querySelector(".korGridMenu"), null);
+	const before = one(root(), '[role=columnheader][aria-colindex="1"]').getBoundingClientRect().width;
+	one(root(), '[data-grip="0"]').dispatchEvent(new MouseEvent("dblclick", { bubbles: true }));
+	const after = one(root(), '[role=columnheader][aria-colindex="1"]').getBoundingClientRect().width;
+	assert.ok(after > before + 100, `${before} -> ${after}`);
+	const text = one(root(), '[data-col="0"] .korCellLink');
+	assert.ok(text.scrollWidth <= text.clientWidth + 1, "uzun metin sığar");
+	one(root(), '[role=columnheader][aria-colindex="2"]').dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+	one(document, ".korGridMenu [data-key=hide]").click();
+	assert.strictEqual(all(root(), "[role=columnheader][aria-colindex]").length, 1);
+});
+
+QUnit.test("DataGrid: Ctrl+F bulur, Enter ve Ctrl+G sonrakine gider", (assert) => {
+	const { grid: control } = grid(50);
+	const root = () => control.getDomRef() as HTMLElement;
+	const scroll = one(root(), "[role=grid]");
+	scroll.focus();
+	key(scroll, "f", { ctrlKey: true });
+	const input = one(root(), ".korGridFind input") as HTMLInputElement;
+	assert.strictEqual(document.activeElement, input);
+	type(input, "s1");
+	const active = () => one(root(), ".korCellActive").textContent;
+	assert.strictEqual(active(), "S1");
+	assert.strictEqual(one(root(), ".korGridFindCount").textContent, "1 / 11");
+	key(input, "Enter");
+	assert.strictEqual(active(), "S10");
+	key(input, "Enter", { shiftKey: true });
+	key(input, "Enter", { shiftKey: true });
+	assert.strictEqual(active(), "S19", "başa gelince sona döner");
+	type(input, "yok");
+	assert.strictEqual(input.getAttribute("aria-invalid"), "true");
+	type(input, "S4");
+	key(input, "Escape");
+	assert.strictEqual(root().querySelector(".korGridFind"), null);
+	assert.strictEqual(document.activeElement, one(root(), "[role=grid]"));
+	key(one(root(), "[role=grid]"), "g", { ctrlKey: true });
+	assert.strictEqual(active(), "S41", "Ctrl+G son aramayı sürdürür");
+});
+
 QUnit.test("DataGrid: HTML metin olarak yazılır", (assert) => {
 	const { dom, model } = grid(2);
 	model.setProperty("/rows/0/id", "<img src=x onerror=alert(1)>");
