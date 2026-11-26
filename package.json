@@ -40,7 +40,8 @@
     "test": "node scripts/test.mjs",
     "release:check": "npm run build && npm test && cd npm && npm pack --dry-run",
     "docs": "node web/build.mjs",
-    "docs:check": "node scripts/docs-check.mjs"
+    "docs:check": "node scripts/docs-check.mjs",
+    "renkli": "node scripts/renkli.mjs"
   },
   "devDependencies": {
     "@fontsource-variable/archivo": "5.3.0",

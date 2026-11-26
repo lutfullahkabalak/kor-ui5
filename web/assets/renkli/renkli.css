@@ -1,0 +1,72 @@
+/* Renkli İkon: font, paletler ve SAP-icons yerine geçme kipi */
+
+@font-face {
+	font-family: "RenkliIkon";
+	src: url("fonts/RenkliIkon.woff2") format("woff2"), url("fonts/RenkliIkon.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
+
+/* Paletler: 0 açık zemin (varsayılan), 1 koyu zemin, 2 renkli zemin */
+@font-palette-values --renkli-koyu {
+	font-family: "RenkliIkon";
+	base-palette: 1;
+}
+@font-palette-values --renkli-zemin {
+	font-family: "RenkliIkon";
+	base-palette: 2;
+}
+
+/* Değiştirme kipi: replaceStandardIcons() html'e renkliSap sınıfını ekler.
+   Icon, font ailesini satır içi stil olarak yazar; yalnız tam "SAP-icons" ailesi seçilir
+   (SAP-icons-TNT ve diğer koleksiyonlar etkilenmez). Eksik glif olursa SAP-icons'a düşer. */
+html.renkliSap .sapUiIcon[style*="'SAP-icons'"],
+html.renkliSap .sapUiIcon[style*='"SAP-icons"'],
+html.renkliSap .sapUiIcon[style*="family: SAP-icons;"],
+html.renkliSap .sapUiIcon[style*="family:SAP-icons;"],
+html.renkliSap .korIconFont[style*="'SAP-icons'"],
+html.renkliSap .korIconFont[style*="family: SAP-icons;"],
+html.renkliSap .korIconFont[style*="family:SAP-icons;"] {
+	font-family: "RenkliIkon", "SAP-icons" !important;
+}
+
+/* Koyu temalar ve yüksek karşıtlık siyah */
+html[class*="sapUiTheme-"][class*="_dark"] .sapUiIcon,
+html.sapUiTheme-sap_hcb .sapUiIcon,
+html.sapUiTheme-sap_belize_hcb .sapUiIcon,
+html[data-kor-mode="dark"] .korIconFont,
+.renkliKoyu .sapUiIcon,
+.sapUiIcon.renkliKoyu,
+.renkliKoyu .ri,
+.renkliKoyu .korIconFont,
+.ri.renkliKoyu {
+	font-palette: --renkli-koyu;
+}
+
+/* Dolgu renkli zeminler (vurgulu düğme); başka yerler için renkliZemin sınıfını kullanın */
+.sapMBtnInner.sapMBtnEmphasized .sapUiIcon,
+html.sapUiTheme-sap_horizon .sapMITBSelected .sapMITBFilterIcon,
+html.sapUiTheme-sap_horizon_dark .sapMITBSelected .sapMITBFilterIcon,
+.renkliZemin .sapUiIcon,
+.sapUiIcon.renkliZemin,
+.renkliZemin .ri,
+.renkliZemin .korIconFont,
+html .korBtn-accent .korIconFont,
+.ri.renkliZemin {
+	font-palette: --renkli-zemin;
+}
+
+/* Kor: primary düğme zemini metin rengidir; açık görünümde koyu, koyu görünümde açık palet */
+html:not([data-kor-mode="dark"]) .korBtn-primary .korIconFont {
+	font-palette: --renkli-koyu;
+}
+html[data-kor-mode="dark"] .korBtn-primary .korIconFont {
+	font-palette: normal;
+}
+
+/* Renkli kipte açık zemine geri dönmek için */
+.renkliAcik .sapUiIcon,
+.sapUiIcon.renkliAcik {
+	font-palette: normal;
+}

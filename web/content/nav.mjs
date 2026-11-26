@@ -1,5 +1,5 @@
 // Yan menü sırası. Yeni sayfa eklenince buraya da eklenir; içerik dosyası olmayan ad sitede görünmez.
-export const guides = ["getting-started", "no-build", "models-and-binding", "odata", "theming", "accessibility", "localization", "limits"];
+export const guides = ["getting-started", "no-build", "models-and-binding", "odata", "theming", "colorful-icons", "accessibility", "localization", "limits"];
 export const groups = [
 	{ title: { en: "App", tr: "Uygulama" }, items: ["Shell", "CommandPalette", "Sheet", "Dialog", "Confirm", "Popover", "Tooltip", "Tabs", "Accordion", "Breadcrumbs", "Wizard", "Splitter", "ColumnLayout", "RecordPage", "Inbox", "Toast", "Theme"] },
 	{ title: { en: "Data", tr: "Veri" }, items: ["DataGrid", "TreeGrid", "FilterBar", "Variants", "Flow", "Trend", "BarChart", "PieChart", "Stat", "List", "Details", "Compare", "Pivot", "Heatmap", "Waterfall"] },

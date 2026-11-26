@@ -59,6 +59,31 @@
 		if (e.key === "/" && !typing && !e.defaultPrevented) { e.preventDefault(); openFind(); }
 	});
 
+	// Renkli ikon galerisi: süzme, zemin seçimi, tıklayınca adresi kopyalama
+	const ri = document.querySelector("[data-ri]");
+	if (ri) {
+		const q = ri.querySelector("input"), count = ri.querySelector(".riCount"), cells = $$(".riCell", ri), grid = ri.querySelector(".riGrid");
+		const show = () => {
+			const v = q.value.trim().toLowerCase();
+			let n = 0;
+			cells.forEach((c) => { const ok = !v || c.dataset.n.includes(v); c.hidden = !ok; n += ok; });
+			count.textContent = n ? `${n} / ${cells.length}` : count.dataset.none;
+		};
+		q.addEventListener("input", show);
+		show();
+		$$("[data-pal]", ri).forEach((b) => (b.onclick = () => {
+			$$("[data-pal]", ri).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+			grid.dataset.pal = b.dataset.pal;
+		}));
+		grid.addEventListener("click", (e) => {
+			const c = e.target.closest(".riCell");
+			if (!c) return;
+			const uri = `sap-icon://renkli/${c.dataset.n}`;
+			navigator.clipboard?.writeText(uri).catch(() => {});
+			count.textContent = `${t.copied}: ${uri}`;
+		});
+	}
+
 	// Canlı örnekler
 	const samples = $$(".sample");
 	if (!samples.length || !body.dataset.live) return;
@@ -74,6 +99,9 @@
 		try { new Function("sap", src)(shadow); } catch (e) { return fail(e); }
 		if (!called) ok(null);
 	});
+	// Renkli ikon paketi yalnızca örnek kodda geçince yüklenir; ready() ad tablosunu getirir, Kor simgeyi eşzamanlı çizer
+	let renkli;
+	const useRenkli = () => (renkli ??= new Promise((ok, fail) => sap.ui.require(["renkli/register"], (R) => R.ready().then(() => ok(R), fail), fail)));
 	let serial = 0;
 	async function run(s) {
 		const stage = s.querySelector("[data-stage]"), mine = ++serial;
@@ -81,6 +109,7 @@
 		try {
 			const xml = code(s, "xml");
 			const [XMLView, JSONModel] = await new Promise((ok, fail) => sap.ui.require(["sap/ui/core/mvc/XMLView", "sap/ui/model/json/JSONModel", "kor/ui/library"], (...a) => ok(a), fail));
+			if (/renkli/.test(xml + code(s, "js"))) await useRenkli();
 			const C = await controller(code(s, "js"));
 			const definition = /^\s*<mvc:View/.test(xml) ? xml : `<mvc:View ${NS}>${xml}</mvc:View>`;
 			const json = JSON.parse(s.querySelector("[data-model]").textContent);
@@ -145,7 +174,7 @@
 	const boot = document.createElement("script");
 	boot.id = "sap-ui-bootstrap";
 	boot.src = body.dataset.live;
-	Object.entries({ "theme": "sap_horizon", "language": lang, "async": "true", "compat-version": "edge", "libs": "kor.ui", "resourceroots": JSON.stringify({ "kor.ui": `${base}resources/kor/ui/` }) }).forEach(([k, v]) => boot.setAttribute("data-sap-ui-" + (k === "compat-version" ? "compatVersion" : k), v));
+	Object.entries({ "theme": "sap_horizon", "language": lang, "async": "true", "compat-version": "edge", "libs": "kor.ui", "resourceroots": JSON.stringify({ "kor.ui": `${base}resources/kor/ui/`, "renkli": `${base}assets/renkli/` }) }).forEach(([k, v]) => boot.setAttribute("data-sap-ui-" + (k === "compat-version" ? "compatVersion" : k), v));
 	boot.onload = () => { sap.ui.getCore().attachInit(window.korBoot); };
 	boot.onerror = () => samples.forEach((s) => { const w = s.querySelector(".sampleWait"); if (w) w.textContent = t.failed; });
 	document.head.append(boot);

@@ -185,6 +185,8 @@ function page(lang, rel, { title, text, body, nav = true, live = false, toc = []
 fs.rmSync(out, { recursive: true, force: true });
 const stamp = Date.now().toString(36);
 fs.cpSync(path.join(here, "assets"), path.join(out, "assets"), { recursive: true });
+// Renkli ikon paketi indirilebilir zip olarak da sunulur (kaynak: npm run renkli)
+if (fs.existsSync(path.join(here, "assets/renkli"))) execFileSync("zip", ["-qrX", path.join(out, "assets/renkli.zip"), "renkli", "-x", "*.DS_Store"], { cwd: path.join(here, "assets") });
 fs.cpSync(path.join(root, "docs/img"), path.join(out, "img"), { recursive: true });
 if (!fs.existsSync(path.join(root, "site"))) throw new Error("Önce kökte `npm run build` çalıştır (site/ gerekli)");
 fs.cpSync(path.join(root, "site/resources"), path.join(out, "resources"), { recursive: true });
@@ -221,7 +223,10 @@ ${c.related ? `<h2>${t.related}</h2><p class="rel">${c.related.filter((x) => com
 		const m = md(loc(g.body[lang], lang));
 		// Bağlantılar dil önekini kendisi alır: içerikte /components/... yazılır
 		const html = lang === "tr" ? m.html.replace(/href="\/(?=components|guides|examples|playground)/g, 'href="/tr/') : m.html;
-		page(lang, `guides/${k}/`, { title: `${g.title[lang]} · Kor`, text: g.summary[lang], toc: m.toc, section: "guides", body: `<h1>${esc(g.title[lang])}</h1><p class="lead">${inline(g.summary[lang])}</p>${html}` });
+		// İsteğe bağlı: canlı örnekler ve sayfaya özel ek HTML (renkli ikon galerisi gibi)
+		const extra = (g.samples ? `<h2 id="samples">${t.samples}</h2>${g.samples.map((s, i) => sampleHtml(s, `s${i + 1}`, lang)).join("")}` : "") + (g.html ? g.html(lang) : "");
+		const toc = [...m.toc, ...(g.samples ? [["samples", t.samples]] : []), ...(g.toc ? g.toc[lang] : [])];
+		page(lang, `guides/${k}/`, { title: `${g.title[lang]} · Kor`, text: g.summary[lang], toc, section: "guides", live: !!g.samples, head: g.head ?? "", body: `<h1>${esc(g.title[lang])}</h1><p class="lead">${inline(g.summary[lang])}</p>${html}${extra}` });
 	}
 	page(lang, "components/", { title: `${t.components} · Kor`, text: t.compText, section: "components", body: `<h1>${t.components}</h1><p class="lead">${t.compText}</p>${groups.map((g) => `<h2>${g.title[lang]}</h2><ul class="compList">${g.items.filter((n) => comps[n]).map((n) => `<li><a href="${compUrl(n, lang)}">${n}</a><span>${inline(comps[n].summary[lang])}</span></li>`).join("")}</ul>`).join("")}` });
 	page(lang, "playground/", { title: `${t.playground} · Kor`, text: t.pgText, nav: false, live: true, section: "playground", body: `<h1>${t.playground}</h1><p class="lead">${t.pgText}</p>${sampleHtml({ ...comps.Button.samples[0], title: null }, "pg", lang, true)}` });
