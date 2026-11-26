@@ -58,7 +58,9 @@ export default class Schedule extends Control {
 			/** İş taşındı; task.start, end ve lane güncellenmiştir */
 			taskChange: { parameters: { task: { type: "kor.ui.ScheduleTask" }, conflict: { type: "boolean" } } },
 			/** İş açıldı */
-			taskPress: { parameters: { task: { type: "kor.ui.ScheduleTask" } } }
+			taskPress: { parameters: { task: { type: "kor.ui.ScheduleTask" } } },
+			/** Kaynağın boş gününe basıldı (yeni rezervasyon, yeni iş); date yerel gün */
+			slotPress: { parameters: { lane: { type: "string" }, date: { type: "object" } } }
 		}
 	};
 	private justDragged = false;
@@ -170,7 +172,17 @@ export default class Schedule extends Control {
 	}
 	onclick(event: Press): void {
 		const task = this.taskOf(event.target);
-		if (task && !this.justDragged) this.fireTaskPress({ task });
+		if (task) {
+			if (!this.justDragged) this.fireTaskPress({ task });
+			return;
+		}
+		const track = (event.target as HTMLElement).closest<HTMLElement>(".korPlanTrack");
+		const lane = track?.closest<HTMLElement>("[data-lane]")?.dataset.lane;
+		const x = (event.originalEvent as MouseEvent | undefined)?.clientX;
+		if (!track || lane === undefined || x === undefined) return;
+		const box = track.getBoundingClientRect();
+		const at = Math.floor((isRtl() ? box.right - x : x - box.left) / this.getDayWidth());
+		if (at >= 0 && at < this.getDays()) this.fireSlotPress({ lane, date: fromNo(dayNo(this.getStart()) + at) });
 	}
 	onkeydown(raw: KeyboardEvent): void {
 		const event = (raw as unknown as { originalEvent?: KeyboardEvent }).originalEvent ?? raw;

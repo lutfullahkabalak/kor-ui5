@@ -5,6 +5,10 @@
 - DataGrid: drag a column header to move the column (Ctrl+← / Ctrl+→ from the keyboard)
 - DataGrid: column menu on right-click or Shift+F10 with sort, optimal width, move, hide
 - DataGrid: double-click a column border for optimal width; Ctrl+F finds, Ctrl+G goes to the next match
+- Reconciliation: MatchGrid (two-sided matching with auto-match), ReconcileLetter (balance confirmation and reply), ReconMatrix (partner × month, e.g. BA/BS)
+- Leasing: LeaseTimeline (increases, options, notice deadlines), EscalationField (rent increase rule with preview), DamageMap (vehicle handover and return)
+- Input: SignaturePad
+- Installments: `showBalance` and `Installment.remeasured`; Schedule: `slotPress` for clicks on an empty day
 - No breaking changes
 
 ## 0.2.0

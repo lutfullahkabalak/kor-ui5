@@ -41,6 +41,28 @@ export default {
 					Toast.show(event.getParameter("task").getText());
 				}
 			}));`
+		},
+		{
+			title: { en: "Vehicle rental board", tr: "Araç kiralama panosu" },
+			text: { en: "Click an empty day to start a booking; slotPress gives the vehicle and the day.", tr: "Rezervasyon başlatmak için boş bir güne basın; slotPress aracı ve günü verir." },
+			xml: `<k:Schedule label="[[Fleet||Filo]]" start="2026-12-01" today="2026-12-02" days="10" dayWidth="52" slotPress=".onSlot">
+				<k:lanes>
+					<k:ScheduleLane key="c1" title="34 KOR 512" text="[[Compact||Kompakt]]"/>
+					<k:ScheduleLane key="c2" title="34 KOR 718" text="[[SUV||SUV]]"/>
+					<k:ScheduleLane key="c3" title="06 KOR 204" text="[[Van||Panelvan]]"/>
+				</k:lanes>
+				<k:tasks>
+					<k:ScheduleTask key="R-1" lane="c1" title="R-1041" text="Selin Arı" start="2026-12-01" end="2026-12-03" state="info"/>
+					<k:ScheduleTask key="M-1" lane="c1" title="[[Service||Bakım]]" start="2026-12-06" end="2026-12-06" state="wait"/>
+					<k:ScheduleTask key="R-2" lane="c2" title="R-1042" text="Mert Kaya" start="2026-12-02" end="2026-12-08" state="info"/>
+					<k:ScheduleTask key="R-3" lane="c3" title="R-1043" text="[[Kuzey Logistics||Kuzey Lojistik]]" start="2026-12-04" end="2026-12-09" state="success"/>
+				</k:tasks>
+			</k:Schedule>`,
+			js: `sap.ui.define(["sap/ui/core/mvc/Controller", "kor/ui/Toast"], (Controller, Toast) => Controller.extend("sample.Rental", {
+				onSlot(event) {
+					Toast.show("[[New booking||Yeni rezervasyon]]", { text: event.getParameter("lane") + " · " + event.getParameter("date").toLocaleDateString() });
+				}
+			}));`
 		}
 	]
 };

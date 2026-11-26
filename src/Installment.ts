@@ -28,7 +28,9 @@ export default class Installment extends Element {
 			/** success ödendi, danger gecikti, wait bekliyor, none sırada */
 			state: { type: "string", defaultValue: "none" },
 			/** Durum metni */
-			statusText: { type: "string", defaultValue: "" }
+			statusText: { type: "string", defaultValue: "" },
+			/** Tutar bu taksitte değişti (kira artışı, yeniden ölçüm) */
+			remeasured: { type: "boolean", defaultValue: false }
 		}
 	};
 }
