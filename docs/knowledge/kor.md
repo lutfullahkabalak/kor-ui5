@@ -117,3 +117,12 @@ Sahibin isteği: sütunlar sürükle-bırakla yer değiştirsin, SAP GUI (ALV) d
 - Ekran okuyucu için `<id>-say` canlı alanı taşıma sonucunu söyler; tablo `aria-keyshortcuts` taşır.
 - Mac'te Ctrl+ok Mission Control'e gider; ⌘ ile çalışır, menü ipucu ⌘ gösterir. Gerçek Mac kısayol çakışması ve Windows Menü tuşu elle denenmedi.
 - RTL'de sürükleme ve menü yönü kodda ele alındı ama tarayıcıda denenmedi.
+
+## Bayrak ve banka logosu (2026-11-26)
+Sahibin isteği: dünyadaki tüm bayrak ve banka logolarını kapsayan özellik. `Flag` ve `BankLogo` eklendi; ayrı dal `bayrak-ve-banka-logolari` (ana depoda başka oturumun commit'lenmemiş işi vardı, worktree ile ayrıldı).
+- Bayraklar `flag-icons` 7.6.0'dan (MIT): 271 bayrak, ISO 3166-1'in 249 ülkesinin tümü, İngiltere ülkeleri, bazı bölgeler, eu/un. `scripts/flags.mjs` SVG'leri `src/assets/flags/{4x3,1x1}` altına kopyalar (izlenmez, 5,2 MB; `postinstall` ve `build` çalıştırır) ve `src/flags.ts` ad tablosunu üretir (izlenir). Bayrak `<img loading=lazy>` ile yalnız görününce yüklenir; ad `Intl.DisplayNames` ile uygulama dilinde.
+- Banka logosu DAĞITILMAZ: logolar tescilli marka, dünya bankalarını kapsayan açık lisanslı küme yok, depo herkese açık Apache-2.0. Kapsama BIC ile sağlanır: `kor/ui/bankLogos` modülünde `registerBankLogos` (anahtar: uygulama anahtarı → BIC11 → BIC8) ve `setBankLogoProvider` (şablon `{bic8}` vb. veya işlev). Logo yoksa veya resim yüklenemezse BIC/ad baş harfli işaret + BIC'in (yoksa IBAN'ın) ülke bayrağı çizilir.
+- Kayıt değişince çizilmiş BankLogo kendiliğinden yenilenmez; kayıt görünümden önce yapılmalı (veya `invalidate`). IBAN yalnız ülke için okunur, DOM'a yazılmaz. `src` yalnız http(s), göreli ve resim `data:` kabul eder.
+- Yardımcı işlevler ayrı modülde (`bankLogos.ts`): varsayılan sınıf ile adlı dışa aktarım aynı modülde olamaz (bkz. Ağaç bölümü).
+- `docs-check` artık örnekteki `img` öğesini içerik sayar (bayrak örnekleri "boş" sanılıyordu).
+- Doğrulandı: QUnit 96/96 (Sector 37) 1.108.55 ve 1.154.0; `docs:check /components/` 178 sayfa 0 hata; Flag ve BankLogo sayfalarına açık temada bakıldı. Python `http.server` 280 eşzamanlı istekte birkaç bayrağı düşürdü; dosyalar sağlam, gerçek sunucuda denenmedi. Koyu Kor teması, ekran okuyucu, RTL ve 390 px denenmedi.
