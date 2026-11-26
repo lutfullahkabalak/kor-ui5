@@ -12,10 +12,10 @@ Enterprise components for OpenUI5 and SAPUI5 1.108+. Kor does not look like Fior
 | Data | `DataGrid`, `TreeGrid`, `FilterBar`, `Variants`, `Flow`, `Trend`, `BarChart`, `PieChart`, `Stat`, `List`, `Details`, `Compare`, `Pivot`, `Heatmap`, `Waterfall` |
 | Planning | `Board`, `Schedule`, `Stages`, `Activity`, `MonthCalendar` |
 | Input | `TextField`, `NumberField`, `SelectField`, `MultiSelect`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `RadioGroup`, `Toggle`, `Check`, `Segmented`, `FileDrop`, `Form` |
-| Base | `Button`, `HoldButton`, `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress` |
+| Base | `Button`, `HoldButton`, `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress`, `Flag` |
 | Cargo | `Shipment`, `DeliveryRoute`, `LoadPlan`, `DockBoard` |
 | Manufacturing | `ProductionLine`, `MachineCard` |
-| Banking | `BankCard`, `Statement`, `Installments` |
+| Banking | `BankCard`, `BankLogo`, `Statement`, `Installments` |
 | Education | `Timetable`, `Classroom`, `CoursePath` |
 | Human resources | `OrgChart`, `LeaveBalance`, `ShiftRoster`, `TalentGrid` |
 

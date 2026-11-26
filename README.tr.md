@@ -15,10 +15,10 @@ OpenUI5 ve SAPUI5 (1.108+) için kurumsal bileşen paketi. Fiori görünümüne 
 | Planlama | `Board`, `Schedule`, `Stages`, `Activity`, `MonthCalendar` |
 | Giriş | `TextField`, `NumberField`, `SelectField`, `LookupField` (F4), `DateField`, `DateRangeField`, `TimeField`, `DateTimeField`, `TreeField`, `Slider`, `Rating`, `PromptField`, `Toggle`, `Check`, `RadioGroup`, `Segmented`, `MultiSelect`, `FileDrop`, `Form` |
 | Eylem | `Button` (menülü), `HoldButton` |
-| Temel | `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress` |
+| Temel | `Status`, `Person`, `Icon`, `Message`, `MessageList`, `Skeleton`, `Empty`, `Text`, `Stack`, `Link`, `Card`, `Progress`, `Flag` |
 | Kargo | `Shipment`, `DeliveryRoute`, `LoadPlan`, `DockBoard` |
 | Üretim | `ProductionLine`, `MachineCard` |
-| Bankacılık | `BankCard`, `Statement`, `Installments` |
+| Bankacılık | `BankCard`, `BankLogo`, `Statement`, `Installments` |
 | Eğitim | `Timetable`, `Classroom`, `CoursePath` |
 | İnsan kaynakları | `OrgChart`, `LeaveBalance`, `ShiftRoster`, `TalentGrid` |
 

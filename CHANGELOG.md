@@ -5,6 +5,8 @@
 - DataGrid: drag a column header to move the column (Ctrl+← / Ctrl+→ from the keyboard)
 - DataGrid: column menu on right-click or Shift+F10 with sort, optimal width, move, hide
 - DataGrid: double-click a column border for optimal width; Ctrl+F finds, Ctrl+G goes to the next match
+- Flag: every ISO 3166-1 country flag (249), plus UK nations, regions and organizations, in rect, square or circle
+- BankLogo: bank logo from your registry or logo server, or a mark and country flag for any BIC in the world. Kor ships no bank logos
 - No breaking changes
 
 ## 0.2.0
