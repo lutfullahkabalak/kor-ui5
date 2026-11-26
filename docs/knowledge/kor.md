@@ -139,3 +139,12 @@ Sahibin isteği: dünyadaki tüm bayrak ve banka logolarını kapsayan özellik.
 - Yardımcı işlevler ayrı modülde (`bankLogos.ts`): varsayılan sınıf ile adlı dışa aktarım aynı modülde olamaz (bkz. Ağaç bölümü).
 - `docs-check` artık örnekteki `img` öğesini içerik sayar (bayrak örnekleri "boş" sanılıyordu).
 - Doğrulandı: QUnit 96/96 (Sector 37) 1.108.55 ve 1.154.0; `docs:check /components/` 178 sayfa 0 hata; Flag ve BankLogo sayfalarına açık temada bakıldı. Python `http.server` 280 eşzamanlı istekte birkaç bayrağı düşürdü; dosyalar sağlam, gerçek sunucuda denenmedi. Koyu Kor teması, ekran okuyucu, RTL ve 390 px denenmedi.
+
+## Renkli ikonlar doküman sitesinde (2026-11-26)
+Sahibin isteği: `openui5-custom/icons` altındaki renkli ikon paketi (SAP-icons'un 704 adı) Kor doküman sitesine eklensin. Rehber sayfası `guides/colorful-icons/` ("Renkli ikonlar"): kullanım, iki canlı örnek, aranabilir galeri, `assets/renkli.zip` indirme.
+- Paket kaynağı ve derlemesi `../openui5-custom/icons`'ta kalır. `npm run renkli` çıktıyı `web/assets/renkli/` altına kopyalar (font, register.js, css, 704 SVG; ~3 MB). Kopya izlenir, çünkü CI kaynak depoya erişemez. Paket değişince yeniden çalıştırılıp commit'lenir.
+- `web/build.mjs`: rehber içerik dosyası artık isteğe bağlı `samples` (canlı örnek), `html(lang)` (ek HTML), `toc` ve `head` alabilir. `renkli.zip` derlemede `web/assets/renkli`'den üretilir.
+- `docs.js`: `renkli` kaynak kökü her sayfada tanımlı. Örnek kodunda "renkli" geçerse önce `renkli/register` + `ready()` beklenir. Nedeni: Kor `IconPool.getIconInfo(..., "sync")` ile çizer, tembel font yüklenmeden ikon boş kalır.
+- Kor uyumu paketin `renkli.css` dosyasında: `korIconFont` değiştirme kipine girer, Kor koyu görünümünde koyu palet, `korBtn-accent`'te renkli zemin, `korBtn-primary`'de zemine uyan palet. Ders: `rm.style()` font ailesini tırnaksız yazar (`font-family: SAP-icons;`), `iconHtml` tırnaklı; seçici ikisini de kapsamalı.
+- Doğrulandı: site 216 sayfa 0 hata (`docs:check`), `DOCS_BASE=/kor-ui5` ile rehberler 18 sayfa 0 hata. Tarayıcıda: iki örnek çalışıyor, değiştirme kipi Kor düğmelerini ve `core:Icon`'u renklendiriyor, galeri süzme ve koyu görünüm. Türkçe sayfa üretiliyor. Denenmedi: 390 px, Safari/Firefox, RTL.
+- Açık: paketin lisansı ve kalıcı adı kararlaştırılmadı; sitede lisans iddiası yok, yalnız çizimlerin özgün olduğu yazıyor.
