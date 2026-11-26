@@ -83,6 +83,7 @@ https://korui5.abapnews.com (EN varsayılan, `/tr/`), Cloudflare Worker `korui5`
 - Arka plandaki sekmede IntersectionObserver çalışmaz; paralel denetimde her işçiye ayrı Chrome açılır.
 - github.io/kor-ui5 aynı sitenin alt yoldaki kopyasıdır (2026-11-25): `DOCS_BASE=/kor-ui5 npm run docs`, `pages.yml` her push'ta yayımlar; canonical korui5.abapnews.com. Denetim: `DOCS_BASE=/kor-ui5 npm run docs:check`. Demo artık `/kor-ui5/demo/`.
 - Örnek uygulamalar ayrı depoda: `../kor-ui5-examples` (github.io/kor-ui5-examples).
+- Trafik (2026-11-26): Cloudflare Web Analytics sitesi `korui5.abapnews.com` (elle kurulum, site_tag `0e2c4bdd…`). abapnews.com zone'unun otomatik RUM'u Worker statik yanıtlarına beacon basmaz; bu yüzden `build.mjs` her HTML'e (demo, örnekler dahil) beacon ekler, localhost'ta yüklemez. github.io kopyası da aynı token ile sayılır (host'a göre ayrılır). Beacon öncesi ham trafik için zone SQL'i: `cf sql query "... FROM events.httpRequests WHERE clientRequestHttpHost='korui5.abapnews.com' ..." --scope-zone <zone>`; ORDER BY için LIMIT şart, `multiIf` yok, `sampleInterval` ile toplanır.
 - Kusur: Flow açık zeminde okunmaz (etiketler sabit açık renk); sitede örnek zemini koyulaştırıldı.
 
 ## Sektör aileleri ve eksik bileşenler (2026-11-25)

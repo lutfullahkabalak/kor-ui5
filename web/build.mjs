@@ -230,6 +230,13 @@ ${c.related ? `<h2>${t.related}</h2><p class="rel">${c.related.filter((x) => com
 	page(lang, "404.html", { title: `${t.notFound} · Kor`, text: t.notFoundText, nav: false, body: `<h1>${t.notFound}</h1><p class="lead">${t.notFoundText}</p><p class="rel"><a href="${b}components/">${t.components}</a></p>` });
 	fs.writeFileSync(path.join(out, `assets/index-${lang}.json`), JSON.stringify(index[lang]));
 }
+// Cloudflare Web Analytics (çerezsiz). Worker yanıtlarına otomatik eklenmediği için her sayfaya elle konur; demo ve örnekler dahil.
+// Yerelde yüklenmez: yerel ziyaretleri saymasın, docs:check CORS hatası görmesin.
+const BEACON = `<script>if(!/^(localhost|127\\.|\\[::1\\])/.test(location.hostname)){var s=document.createElement("script");s.defer=true;s.src="https://static.cloudflareinsights.com/beacon.min.js";s.setAttribute("data-cf-beacon",'{"token": "ff875ae36f5b4dc08ef7ee8d37c61391"}');document.head.appendChild(s)}</script>`;
+for (const f of fs.globSync(`${out}/**/*.html`)) {
+	const h = fs.readFileSync(f, "utf8");
+	if (!h.includes("cloudflareinsights")) fs.writeFileSync(f, h.replace("</head>", `${BEACON}</head>`));
+}
 if (sub) for (const f of fs.globSync(`${out}/**/*.html`)) fs.writeFileSync(f, fs.readFileSync(f, "utf8")
 	.replace(/(href|src)="\/(?!\/)/g, `$1="${sub}/`)
 	.replaceAll('"/resources/kor/ui/"', `"${sub}/resources/kor/ui/"`));
