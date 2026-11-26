@@ -1,6 +1,6 @@
 {
   "name": "kor-ui5",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Enterprise components for OpenUI5 and SAPUI5 (UI5 >= 1.108)",
   "license": "Apache-2.0",

@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.3.0
 
 - DataGrid: drag a column header to move the column (Ctrl+← / Ctrl+→ from the keyboard)
 - DataGrid: column menu on right-click or Shift+F10 with sort, optimal width, move, hide
