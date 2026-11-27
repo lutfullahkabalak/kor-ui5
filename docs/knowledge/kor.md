@@ -151,8 +151,15 @@ Sahibin isteği: `openui5-custom/icons` altındaki renkli ikon paketi (SAP-icons
 
 ## 0.3.0 yayını (2026-11-26)
 - İçerik: DataGrid SAP GUI deneyimi, mutabakat, kiralama, SignaturePad, Flag, BankLogo (CHANGELOG 0.3.0). Kırıcı değişiklik yok, bu yüzden küçük sürüm.
-- Adımlar: `npm version X --no-git-tag-version`; CHANGELOG "Unreleased" → sürüm; README/README.tr'deki "X, erken sürüm" ve `web/content/guides/no-build.mjs` zip bağlantısı; `npm run release:check`; TS tüketici denemesi; commit + `vX` etiketi + push; `release/` içinden `zip -qrX kor-ui.zip LICENSE NOTICE kor` ile `gh release create`; `npm run docs && npm run docs:check`, `cd web && npx cf deploy ./dist`; npm yayınını sahibi yapar (`cd npm && npm publish --access public`, iki adımlı doğrulama).
+- Adımlar: `npm version X --no-git-tag-version`; CHANGELOG "Unreleased" → sürüm; README/README.tr'deki "X, erken sürüm" ve `web/content/guides/no-build.mjs` zip bağlantısı; `npm run release:check`; TS tüketici denemesi; commit + `vX` etiketi + push; `release/` içinden `zip -qrX kor-ui.zip LICENSE NOTICE kor` ile `gh release create`; `npm run docs && npm run docs:check`, `cd web && npx cf deploy ./dist`, `node scripts/indexnow.mjs`; npm yayınını sahibi yapar (`cd npm && npm publish --access public`, iki adımlı doğrulama).
 - TS tüketici denemesi: boş projede `npm i <pack>.tgz typescript @openui5/types`, tsconfig'de `target es2022`, `skipLibCheck true`, `types: ["@openui5/types", "kor-ui5"]`. Bu ayarlar olmadan hatalar UI5 tiplerinden gelir, Kor'dan değil.
 - Doğrulandı: QUnit 105/105 (1.108.55 ve 1.154.0), paket 1,6 MB / 1025 dosya (bayraklar yüzünden 0.2.0'dan büyük), TS denemesi temiz, site 216 sayfa 0 hata. Zip 6 MB, 880 dosya.
 - 0.3.0 npm'de yayında (2026-11-26, `latest`); sahibi oturum terminalinde tarayıcıdan onayladı. GitHub sürümü ve site aynı gün.
 - README ana sayfa sayısı artık `home.mjs` içinde menüden sayılır ("kırk bileşen" eskimişti).
+
+## Doküman sitesi SEO (2026-11-27)
+- `web/build.mjs` her sayfaya og:url/site_name/locale, twitter kartı ve JSON-LD basar: ana sayfada WebSite + SoftwareSourceCode, bileşen ve kılavuzlarda TechArticle + BreadcrumbList, bileşen listesinde ItemList. Yayıncı abapnews.com'un Organization kaydıdır. 404 `noindex`.
+- Bileşen başlıkları "`DataGrid · UI5 control · Kor`" (TR "UI5 bileşeni"): aramalar "ui5 data grid" biçiminde.
+- Sitemap'te `lastmod` (sayfanın içerik ve `src` dosyasının son git commit tarihi) ve hreflang karşılıkları var. `llms.txt` bileşen listesinden üretilir.
+- `_redirects` eğik çizgisiz adresleri 301 ile yönlendirir; Cloudflare'in `auto-trailing-slash` yönlendirmesi 307'dir. Canlıda `_redirects`'in öncelikli olduğu doğrulandı. github.io kopyasında üretilmez.
+- IndexNow: anahtar dosyası dist köküne yazılır; her yayından sonra `node scripts/indexnow.mjs` (canlı sitemap'i gönderir; 2026-11-27'de 216 adres, HTTP 200).

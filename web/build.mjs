@@ -270,6 +270,9 @@ if (sub) for (const f of fs.globSync(`${out}/**/*.html`)) fs.writeFileSync(f, fs
 // Sitemap: lastmod + iki dilin karşılıkları (hreflang). Ana sayfa ve bileşen sayfaları önce.
 const alt = (rel) => ["en", "tr", "x-default"].map((h) => `<xhtml:link rel="alternate" hreflang="${h}" href="${ORIGIN}${h === "tr" ? "/tr/" : "/"}${rel}"/>`).join("");
 fs.writeFileSync(path.join(out, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.map((u) => `<url><loc>${ORIGIN}${u}</loc><lastmod>${pageMeta[u].modified}</lastmod>${alt(pageMeta[u].rel)}</url>`).join("\n")}\n</urlset>\n`);
+// IndexNow anahtarı (herkese açık olması gerekir; abapnews.com ile aynı). Gönderim: node scripts/indexnow.mjs
+export const INDEXNOW_KEY = "70457ebca81228a75ef1efde8c3f9899";
+if (!sub) fs.writeFileSync(path.join(out, `${INDEXNOW_KEY}.txt`), INDEXNOW_KEY);
 // llms.txt: yapay zekâ araçları için kısa site haritası (llmstxt.org biçimi)
 fs.writeFileSync(path.join(out, "llms.txt"), `# Kor (kor-ui5)\n\n> ${home.summary.en} Open source (Apache-2.0), installed with \`npm install kor-ui5\`. Not affiliated with SAP.\n\n- Source: ${REPO}\n- npm: https://www.npmjs.com/package/kor-ui5\n- Turkish docs: ${ORIGIN}/tr/\n\n## Guides\n\n${Object.entries(guidePages).map(([k, g]) => `- [${g.title.en}](${ORIGIN}/guides/${k}/): ${g.summary.en.replace(/\`/g, "")}`).join("\n")}\n\n${groups.map((g) => `## ${g.title.en}\n\n${g.items.filter((n) => comps[n]).map((n) => `- [${n}](${ORIGIN}${compUrl(n, "en")}): ${comps[n].summary.en.replace(/\`/g, "")}`).join("\n")}`).join("\n\n")}\n\n## Optional\n\n- [Examples](${ORIGIN}/examples/)\n- [Playground](${ORIGIN}/playground/)\n- [Demo app](${ORIGIN}/demo/)\n`);
 // Sondaki eğik çizgi eksikse kalıcı (301) yönlendirme: Cloudflare'in kendi yönlendirmesi geçici (307)
