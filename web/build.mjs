@@ -156,15 +156,28 @@ const home = await load(".", "home"), examples = await load(".", "examples");
 
 // ---- Sayfa
 const urls = [], index = { en: [], tr: [] };
-function page(lang, rel, { title, text, body, nav = true, live = false, toc = [], section = "docs", head = "" }) {
+// SEO: son değişiklik tarihi git geçmişinden (sitemap lastmod, dateModified). Git yoksa derleme tarihi.
+const modOf = (files) => {
+	try { return execFileSync("git", ["log", "-1", "--format=%cs", "--", ...files], { cwd: root, encoding: "utf8" }).trim() || null; } catch { return null; }
+};
+const today = new Date().toISOString().slice(0, 10);
+const NEWS = "https://abapnews.com/";
+const publisher = { "@type": "Organization", "@id": `${NEWS}#organization`, name: "abap news", url: NEWS };
+const crumbs = (lang, items) => ({ "@type": "BreadcrumbList", itemListElement: items.map(([name, u], i) => ({ "@type": "ListItem", position: i + 1, name, item: ORIGIN + u })) });
+const pageMeta = {};
+function page(lang, rel, { title, text, body, nav = true, live = false, toc = [], section = "docs", head = "", ld = [], files = [], noindex = false }) {
 	const t = T[lang], b = base(lang), other = lang === "en" ? "tr" : "en";
+	const url = `${ORIGIN}${b}${rel}`, modified = (files.length && modOf(files)) || today;
+	pageMeta[`${b}${rel}`] = { rel, modified };
+	const graph = ld.length ? `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": ld.map((x) => (typeof x === "function" ? x({ url, modified }) : x)) }).replaceAll("<", "\\u003c")}</script>` : "";
+	const social = `<meta property="og:url" content="${url}"><meta property="og:site_name" content="Kor"><meta property="og:locale" content="${lang === "en" ? "en_US" : "tr_TR"}"><meta property="og:locale:alternate" content="${lang === "en" ? "tr_TR" : "en_US"}"><meta property="og:image:width" content="1440"><meta property="og:image:height" content="900"><meta property="og:image:alt" content="${lang === "en" ? "Kor controls in a UI5 app" : "Bir UI5 uygulamasında Kor bileşenleri"}"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#15191c" media="(prefers-color-scheme: dark)">${noindex ? '<meta name="robots" content="noindex">' : ""}`;
 	const link = (u, l, on) => `<a href="${u}"${on ? ' aria-current="page"' : ""}>${esc(l)}</a>`;
 	const side = nav ? `<nav class="side" id="side" aria-label="${t.menu}">${Object.keys(guidePages).length ? `<h2>${t.guides}</h2>${Object.entries(guidePages).map(([k, g]) => link(`${b}guides/${k}/`, pick(g.title, lang), rel === `guides/${k}/`)).join("")}` : ""}${groups.map((g) => `<h2>${g.title[lang]}</h2>${g.items.filter((n) => comps[n]).map((n) => link(compUrl(n, lang), n, rel === `components/${slug(n)}/`)).join("")}`).join("")}</nav>` : "";
 	const html = `<!doctype html>
 <html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title><meta name="description" content="${esc(text)}">
 <link rel="canonical" href="${ORIGIN}${b}${rel}"><link rel="alternate" hreflang="en" href="${ORIGIN}/${rel}"><link rel="alternate" hreflang="tr" href="${ORIGIN}/tr/${rel}"><link rel="alternate" hreflang="x-default" href="${ORIGIN}/${rel}">
-<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(text)}"><meta property="og:image" content="${ORIGIN}/img/akis-light.jpg"><meta property="og:type" content="website">
+<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(text)}"><meta property="og:image" content="${ORIGIN}/img/akis-light.jpg"><meta property="og:type" content="website">${social}${graph}
 <link rel="icon" href="/assets/icon.svg"><link rel="stylesheet" href="/resources/kor/ui/kor.css" id="kor-ui-css"><link rel="stylesheet" href="/assets/docs.css?v=${stamp}">
 <script>try{var m=localStorage.getItem("kor-mode")}catch(e){}document.documentElement.dataset.korMode=m||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")</script>${head}</head>
 <body class="kor" data-lang="${lang}"${live ? ` data-live="${UI5}"` : ""} data-t='${esc(JSON.stringify({ copied: t.copied, copy: t.copy, none: t.none, failed: t.failed })).replaceAll("'", "&#39;")}'>
@@ -172,13 +185,13 @@ function page(lang, rel, { title, text, body, nav = true, live = false, toc = []
 <header class="top">${nav ? `<button type="button" class="topMenu" data-menu aria-controls="side" aria-expanded="false">${t.menu}</button>` : ""}<a class="brand" href="${b}">kor</a><nav class="topNav" aria-label="${t.docs}">${guidePages["getting-started"] ? link(`${b}guides/getting-started/`, t.guides, section === "guides") : ""}${link(`${b}components/`, t.components, section === "components")}${examples ? link(`${b}examples/`, t.examples, section === "examples") : ""}${link(`${b}playground/`, t.playground, section === "playground")}${link(`/demo/?lang=${lang}`, t.demo)}</nav>
 <button type="button" class="topSearch" data-search>${t.search}<kbd>/</kbd></button><a class="topLang" href="${base(other)}${rel}" hreflang="${other}" lang="${other}">${other === "tr" ? "Türkçe" : "English"}</a><button type="button" class="topIcon" data-theme aria-label="${t.theme}" title="${t.theme}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg></button><a class="topIcon topGit" href="${REPO}" aria-label="GitHub">GitHub</a></header>
 <div class="${nav ? "layout" : "wide"}">${side}<main id="main" tabindex="-1">${body}</main>${toc.length ? `<aside class="toc">${toc.map(([i, l]) => `<a href="#${i}">${esc(l.replace(/`/g, ""))}</a>`).join("")}</aside>` : ""}</div>
-<footer class="foot"><span>Kor ${version} · Apache-2.0</span><a href="${REPO}">GitHub</a><a href="https://www.npmjs.com/package/kor-ui5">npm</a><span>${lang === "en" ? "Not affiliated with SAP. SAP, SAP Fiori and SAPUI5 are trademarks of SAP SE." : "SAP ile bağlantılı değildir. SAP, SAP Fiori ve SAPUI5, SAP SE'nin ticari markalarıdır."}</span></footer>
+<footer class="foot"><span>Kor ${version} · Apache-2.0</span><a href="${REPO}">GitHub</a><a href="https://www.npmjs.com/package/kor-ui5">npm</a><a href="${NEWS}">abap news</a><span>${lang === "en" ? "Not affiliated with SAP. SAP, SAP Fiori and SAPUI5 are trademarks of SAP SE." : "SAP ile bağlantılı değildir. SAP, SAP Fiori ve SAPUI5, SAP SE'nin ticari markalarıdır."}</span></footer>
 <dialog class="find" aria-label="${t.search}"><input type="search" placeholder="${t.search}" aria-label="${t.search}" autocomplete="off"><div class="findList"></div></dialog>
 <script src="/assets/docs.js?v=${stamp}" defer></script></body></html>`;
 	const f = path.join(out, b.slice(1), rel.endsWith(".html") ? rel : path.join(rel, "index.html"));
 	fs.mkdirSync(path.dirname(f), { recursive: true });
 	fs.writeFileSync(f, html);
-	if (!rel.endsWith(".html")) { urls.push(`${b}${rel}`); index[lang].push({ u: b + rel, t: title.replace(/ · Kor$/, ""), d: text }); }
+	if (!rel.endsWith(".html") && !noindex) { urls.push(`${b}${rel}`); index[lang].push({ u: b + rel, t: title.replace(/ · Kor$/, ""), d: text }); }
 }
 
 // ---- Çıktı
@@ -208,7 +221,10 @@ for (const lang of ["en", "tr"]) {
 		const toc = [["samples", t.samples], ["api", t.api], ...(c.children ?? []).map((x) => [slug(x), x])];
 		const list = (title, v) => (v ? `<div><h3>${title}</h3><ul>${v[lang].map((x) => `<li>${inline(x)}</li>`).join("")}</ul></div>` : "");
 		page(lang, `components/${slug(n)}/`, {
-			title: `${n} · Kor`, text: c.summary[lang].replace(/`/g, ""), live: true, section: "components", toc,
+			title: `${n} · ${lang === "en" ? "UI5 control" : "UI5 bileşeni"} · Kor`, text: c.summary[lang].replace(/`/g, ""), live: true, section: "components", toc,
+			files: [`web/content/components/${n}.mjs`, `src/${n}.ts`],
+			ld: [({ url, modified }) => ({ "@type": "TechArticle", "@id": url + "#article", headline: `${n} ${lang === "en" ? "control for UI5" : "UI5 bileşeni"}`, description: c.summary[lang].replace(/`/g, ""), url, inLanguage: lang, dateModified: modified, image: `${ORIGIN}/img/akis-light.jpg`, isPartOf: { "@id": `${ORIGIN}/#website` }, about: { "@id": `${ORIGIN}/#software` }, publisher, proficiencyLevel: "Expert" }),
+				crumbs(lang, [[t.home, b], [t.components, `${b}components/`], [n, compUrl(n, lang)]])],
 			body: `<h1>${n}</h1><p class="lead">${inline(c.summary[lang])}</p><p class="meta"><code>kor/ui/${n}</code><a href="${REPO}/blob/main/src/${n}.ts">${t.source}</a></p>
 <div class="advice">${list(t.use, c.use)}${list(t.avoid, c.avoid)}</div>
 <h2 id="samples">${t.samples}</h2>${c.samples.map((s, i) => sampleHtml(s, `s${i + 1}`, lang)).join("")}
@@ -226,13 +242,19 @@ ${c.related ? `<h2>${t.related}</h2><p class="rel">${c.related.filter((x) => com
 		// İsteğe bağlı: canlı örnekler ve sayfaya özel ek HTML (renkli ikon galerisi gibi)
 		const extra = (g.samples ? `<h2 id="samples">${t.samples}</h2>${g.samples.map((s, i) => sampleHtml(s, `s${i + 1}`, lang)).join("")}` : "") + (g.html ? g.html(lang) : "");
 		const toc = [...m.toc, ...(g.samples ? [["samples", t.samples]] : []), ...(g.toc ? g.toc[lang] : [])];
-		page(lang, `guides/${k}/`, { title: `${g.title[lang]} · Kor`, text: g.summary[lang], toc, section: "guides", live: !!g.samples, head: g.head ?? "", body: `<h1>${esc(g.title[lang])}</h1><p class="lead">${inline(g.summary[lang])}</p>${html}${extra}` });
+		page(lang, `guides/${k}/`, { title: `${g.title[lang]} · Kor`, text: g.summary[lang], toc, files: [`web/content/guides/${k}.mjs`],
+			ld: [({ url, modified }) => ({ "@type": "TechArticle", "@id": url + "#article", headline: pick(g.title, lang), description: g.summary[lang].replace(/`/g, ""), url, inLanguage: lang, dateModified: modified, image: `${ORIGIN}/img/akis-light.jpg`, isPartOf: { "@id": `${ORIGIN}/#website` }, about: { "@id": `${ORIGIN}/#software` }, publisher }),
+				crumbs(lang, [[t.home, b], [t.guides, `${b}guides/getting-started/`], [pick(g.title, lang), `${b}guides/${k}/`]])], section: "guides", live: !!g.samples, head: g.head ?? "", body: `<h1>${esc(g.title[lang])}</h1><p class="lead">${inline(g.summary[lang])}</p>${html}${extra}` });
 	}
-	page(lang, "components/", { title: `${t.components} · Kor`, text: t.compText, section: "components", body: `<h1>${t.components}</h1><p class="lead">${t.compText}</p>${groups.map((g) => `<h2>${g.title[lang]}</h2><ul class="compList">${g.items.filter((n) => comps[n]).map((n) => `<li><a href="${compUrl(n, lang)}">${n}</a><span>${inline(comps[n].summary[lang])}</span></li>`).join("")}</ul>`).join("")}` });
+	page(lang, "components/", { title: `${t.components} · Kor`, text: t.compText, section: "components", files: ["web/content/nav.mjs"],
+		ld: [crumbs(lang, [[t.home, b], [t.components, `${b}components/`]]), { "@type": "ItemList", name: t.components, itemListElement: Object.keys(comps).map((n, i) => ({ "@type": "ListItem", position: i + 1, name: n, url: ORIGIN + compUrl(n, lang) })) }], body: `<h1>${t.components}</h1><p class="lead">${t.compText}</p>${groups.map((g) => `<h2>${g.title[lang]}</h2><ul class="compList">${g.items.filter((n) => comps[n]).map((n) => `<li><a href="${compUrl(n, lang)}">${n}</a><span>${inline(comps[n].summary[lang])}</span></li>`).join("")}</ul>`).join("")}` });
 	page(lang, "playground/", { title: `${t.playground} · Kor`, text: t.pgText, nav: false, live: true, section: "playground", body: `<h1>${t.playground}</h1><p class="lead">${t.pgText}</p>${sampleHtml({ ...comps.Button.samples[0], title: null }, "pg", lang, true)}` });
 	if (examples) page(lang, "examples/", { title: `${t.examples} · Kor`, text: examples.summary[lang], nav: false, section: "examples", body: examples.body[lang] });
-	page(lang, "", { title: home.title[lang], text: home.summary[lang], nav: false, live: true, section: "home", body: home.body(lang, { b, t, sample: (s) => sampleHtml(s, "hero", lang), comps, groups, compUrl, version }) });
-	page(lang, "404.html", { title: `${t.notFound} · Kor`, text: t.notFoundText, nav: false, body: `<h1>${t.notFound}</h1><p class="lead">${t.notFoundText}</p><p class="rel"><a href="${b}components/">${t.components}</a></p>` });
+	page(lang, "", { title: home.title[lang], text: home.summary[lang], nav: false, live: true, section: "home",
+		ld: [{ "@type": "WebSite", "@id": `${ORIGIN}/#website`, url: `${ORIGIN}/`, name: "Kor", description: home.summary.en, inLanguage: ["en", "tr"], publisher },
+			{ "@type": "SoftwareSourceCode", "@id": `${ORIGIN}/#software`, name: "Kor (kor-ui5)", description: home.summary[lang], url: `${ORIGIN}${b}`, codeRepository: REPO, programmingLanguage: ["TypeScript", "JavaScript"], runtimePlatform: "OpenUI5, SAPUI5 1.108+", license: "https://www.apache.org/licenses/LICENSE-2.0", version, image: `${ORIGIN}/img/akis-light.jpg`, sameAs: [REPO, "https://www.npmjs.com/package/kor-ui5"], publisher },
+			publisher], body: home.body(lang, { b, t, sample: (s) => sampleHtml(s, "hero", lang), comps, groups, compUrl, version }) });
+	page(lang, "404.html", { title: `${t.notFound} · Kor`, text: t.notFoundText, nav: false, noindex: true, body: `<h1>${t.notFound}</h1><p class="lead">${t.notFoundText}</p><p class="rel"><a href="${b}components/">${t.components}</a></p>` });
 	fs.writeFileSync(path.join(out, `assets/index-${lang}.json`), JSON.stringify(index[lang]));
 }
 // Cloudflare Web Analytics (çerezsiz). Worker yanıtlarına otomatik eklenmediği için her sayfaya elle konur; demo ve örnekler dahil.
@@ -245,7 +267,13 @@ for (const f of fs.globSync(`${out}/**/*.html`)) {
 if (sub) for (const f of fs.globSync(`${out}/**/*.html`)) fs.writeFileSync(f, fs.readFileSync(f, "utf8")
 	.replace(/(href|src)="\/(?!\/)/g, `$1="${sub}/`)
 	.replaceAll('"/resources/kor/ui/"', `"${sub}/resources/kor/ui/"`));
-fs.writeFileSync(path.join(out, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map((u) => `<url><loc>${ORIGIN}${u}</loc></url>`).join("")}</urlset>`);
+// Sitemap: lastmod + iki dilin karşılıkları (hreflang). Ana sayfa ve bileşen sayfaları önce.
+const alt = (rel) => ["en", "tr", "x-default"].map((h) => `<xhtml:link rel="alternate" hreflang="${h}" href="${ORIGIN}${h === "tr" ? "/tr/" : "/"}${rel}"/>`).join("");
+fs.writeFileSync(path.join(out, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.map((u) => `<url><loc>${ORIGIN}${u}</loc><lastmod>${pageMeta[u].modified}</lastmod>${alt(pageMeta[u].rel)}</url>`).join("\n")}\n</urlset>\n`);
+// llms.txt: yapay zekâ araçları için kısa site haritası (llmstxt.org biçimi)
+fs.writeFileSync(path.join(out, "llms.txt"), `# Kor (kor-ui5)\n\n> ${home.summary.en} Open source (Apache-2.0), installed with \`npm install kor-ui5\`. Not affiliated with SAP.\n\n- Source: ${REPO}\n- npm: https://www.npmjs.com/package/kor-ui5\n- Turkish docs: ${ORIGIN}/tr/\n\n## Guides\n\n${Object.entries(guidePages).map(([k, g]) => `- [${g.title.en}](${ORIGIN}/guides/${k}/): ${g.summary.en.replace(/\`/g, "")}`).join("\n")}\n\n${groups.map((g) => `## ${g.title.en}\n\n${g.items.filter((n) => comps[n]).map((n) => `- [${n}](${ORIGIN}${compUrl(n, "en")}): ${comps[n].summary.en.replace(/\`/g, "")}`).join("\n")}`).join("\n\n")}\n\n## Optional\n\n- [Examples](${ORIGIN}/examples/)\n- [Playground](${ORIGIN}/playground/)\n- [Demo app](${ORIGIN}/demo/)\n`);
+// Sondaki eğik çizgi eksikse kalıcı (301) yönlendirme: Cloudflare'in kendi yönlendirmesi geçici (307)
+if (!sub) fs.writeFileSync(path.join(out, "_redirects"), urls.filter((u) => u.length > 1 && !u.endsWith("tr/")).map((u) => `${u.slice(0, -1)} ${u} 301`).concat(["/tr /tr/ 301", "/demo /demo/ 301"]).join("\n") + "\n");
 fs.writeFileSync(path.join(out, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
 console.log(`${urls.length} sayfa yazıldı. İçeriği eksik: ${missingContent.length} (${missingContent.join(", ")})`);
 console.log(`api-en.json eksik: ${missingApi.size}${missingApi.size ? "\n  " + [...missingApi].join(", ") : ""}`);
